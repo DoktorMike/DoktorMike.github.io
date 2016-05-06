@@ -5,6 +5,7 @@ date: "May 6, 2016"
 output: html_document
 published: true
 status: publish
+use_math: true
 ---
  
 
