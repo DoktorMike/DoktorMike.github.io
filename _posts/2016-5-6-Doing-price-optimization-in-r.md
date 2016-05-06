@@ -11,9 +11,6 @@ use_math: true
 
  
  
-A simple price optimization
-========================================================
- 
 As many of us already know R is an extremely useful and powerful language for designing, building and evaluating statistical models. In this example I'm going to use R for calculating the optimal price for a product given very few inputs.
  
 First off we need to define a simple model for the relationship between sales volume (y) and price change (p).
