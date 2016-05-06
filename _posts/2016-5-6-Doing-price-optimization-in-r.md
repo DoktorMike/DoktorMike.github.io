@@ -3,6 +3,7 @@ title: "Doing price optimization in R"
 author: "Dr. Michael Green"
 date: "May 6, 2016"
 output: html_document
+layout: post
 published: true
 status: publish
 use_math: true
