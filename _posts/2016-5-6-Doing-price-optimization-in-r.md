@@ -20,7 +20,7 @@ $$ \ln y = \beta \ln p + a $$
 The variable a is used as a baseline for our sales. Based on this function we can define a profit function that
 help us calculate the optimal price based on price elasticity, cost per product produced and profit margin. This function is vectorized and is only defined for price elasticities < -1.0 since that is the condition for finding an optimum. For price elasticities > -1.0 we use a heuristic. In any case the closed formula for the optimal price is given by 
 $$p=\frac{\beta}{\beta+1}\cdot\frac{c-\lambda}{m}$$
-where $\beta$ is the price elasticity, $c$ the cost of production, $m$ the profit margin and $\lambda$ the penalty term for the case when $\beta >= -1.0$. In this example $\lambda$ is set to $0$. Price elasticities greater than -1.0 indicates that if the price increases by 1% then the loss in sales is less than 1%. The R code to implement this function is given below.
+where \\(\beta\\) is the price elasticity, $c$ the cost of production, $m$ the profit margin and $\lambda$ the penalty term for the case when $\beta >= -1.0$. In this example $\lambda$ is set to $0$. Price elasticities greater than -1.0 indicates that if the price increases by 1% then the loss in sales is less than 1%. The R code to implement this function is given below.
  
 
     price<-function(b, cost, m=1, l=0) (b/(b+1))*((cost-l)/m)
