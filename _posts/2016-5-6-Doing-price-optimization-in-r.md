@@ -9,6 +9,7 @@ status: publish
  
 
  
+ 
 A simple price optimization
 ========================================================
  
@@ -33,4 +34,5 @@ The neat thing about this function is that it's vectorized by default (R is real
     qplot(x=b, y=p) +geom_bar(stat="identity")+ theme_bw() + xlab("Price elasticity") + ylab("Optimal price")
 
 ![plot of chunk unnamed-chunk-2](/images/figure/unnamed-chunk-2-1.png)
+ 
 This small example has shown you how to give quantatative input to the optimal price based on the current price elasticity. Of course the end product would need a more complicated model but the use case is clear and simple. I hope you've enjoyed it and will start using R to impress your boss with just how operational it can be.
