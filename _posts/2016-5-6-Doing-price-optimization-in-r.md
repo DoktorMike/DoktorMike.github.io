@@ -16,7 +16,9 @@ A simple price optimization
 As many of us already know R is an extremely useful and powerful language for designing, building and evaluating statistical models. In this example I'm going to use R for calculating the optimal price for a product given very few inputs.
  
 First off we need to define a simple model for the relationship between sales volume (y) and price change (p).
+ 
 $$ \ln y = \beta \ln p + a $$
+ 
 The variable a is used as a baseline for our sales. Based on this function we can define a profit function that
 help us calculate the optimal price based on price elasticity, cost per product produced and profit margin. This function is vectorized and is only defined for price elasticities < -1.0 since that is the condition for finding an optimum. For price elasticities > -1.0 we use a heuristic. In any case the closed formula for the optimal price is given by 
 $$p=\frac{\beta}{\beta+1}\cdot\frac{c-\lambda}{m}$$
