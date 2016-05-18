@@ -38,7 +38,7 @@ $$P_\theta\left(a(x)<\Theta<b(x)\,\middle |\,X=x\right)=\gamma$$
  
 which expresses uncertainty in what we are actually interested in measuring. To not confuse it with the confidence interval I'll use the $$\Theta$$ as the parameter of interest to highlight that it's the focal point of the distribution. In addition I'll call this the **credibility interval** instead. This is not my notation but widely used terminology. Now, we have a very natural way to relate the outcome to probability. We could for example set the degree of belief to 90\% and say the following:
  
-> The degree of my belief that the parameter is indeed in this interval is 90\%.
+> The degree of my belief that the parameter is indeed in this interval is 90%.
  
 As previously mentioned, this statement is reserved for credibility intervals and cannot, I reapeat, **cannot** be used in the setting of a confidence interval. Do not rest your minds until you understand this. 
  
