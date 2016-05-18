@@ -64,7 +64,7 @@ Slow time-to-market
 We live in exciting times. There’s more data, as well as affordable
 computational power, available than ever before. As a consequence a new
 statistical learning paradigm has started to blossom. This new paradigm
-is called being Bayesian @kruschke2015doing and basically refers to the
+is called being Bayesian and basically refers to the
 way we make inferences from existing data. Now what’s really neat about
 this approach is that it enables us to make explicit predictions taking
 all the uncertainty into account from our parameters.
@@ -72,9 +72,7 @@ all the uncertainty into account from our parameters.
 Being Bayesian is good
 ----------------------
 
-The ever increasing interest in Bayesian statistics @gelman2013bayesian
-has led not only to extensive research in Bayesian methodology but also
-to the use of the Bayesian paradigm to address tough challenges in
+The ever increasing interest in Bayesian statistics has led not only to extensive research in Bayesian methodology but also to the use of the Bayesian paradigm to address tough challenges in
 rather diverse domains such as astrophysics, weather forecasting, health
 care policy, and of course media.
 
@@ -130,7 +128,7 @@ Cost
 Truth be told, there is no skipping the initial phase of consolidating
 your data and chasing down the right people in your business
 intelligence department. The key to keeping the costs to a minimum is
-automation. This automation should consist of an ETL @wiki:etl process
+automation. This automation should consist of an ETL process
 running continuously in your environment. This makes sure that data is
 gathered and consolidated as often as you need withouth manual
 intervention. It could, and should, also contain the responsibility of
