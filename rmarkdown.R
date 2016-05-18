@@ -17,7 +17,9 @@ convertRMarkdown <- function(dir=getwd(), images.dir=dir, images.url='/images/',
   for(f in files) {
     message(paste("Processing ", f, sep=''))
     content <- readLines(f)
-    frontMatter <- which(substr(content, 1, 3) == '---')
+    frontMatter <- which(substr(content, 1, 10) == '---')
+    # browser()
+    print(frontMatter)
     if(length(frontMatter) == 2) {
       statusLine <- which(substr(content, 1, 7) == 'status:')
       publishedLine <- which(substr(content, 1, 10) == 'published:')
