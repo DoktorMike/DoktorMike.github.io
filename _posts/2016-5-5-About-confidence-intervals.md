@@ -58,7 +58,7 @@ The question now is how a normal linear regression and a bayesian linear regress
 |:------------- |:-------------------------------------- |:-------------------------- |
 | Intercept     | 959.19 (382.23, 1536.15)               | 940.97 (297.82, 1511.04)   |
 | X             | 197.41 (171.04, 223.78)                | 197.18 (174.18, 229.97)    |
-| X^2^          | -1.98 (-2.24, -1.73)                   | -1.97 (-2.29, -1.75)       |
+| X<sup>2</sup> | -1.98 (-2.24, -1.73)                   | -1.97 (-2.29, -1.75)       |
 
 
 Well hang on a moment, these results are as far as I can see more or less identical! Indeed you are right, as you might recall I did say that we were doing a non-informative Bayes linear regression which means that all of our parameters were fed with uniform non-informative priors. It's rather obvious that there's really no qualitative difference between the confidence intervals created by the frequentist approach and the credibility intervals created by the Bayesian approach. Does this mean that they are the same? Well, no. They are the same because in our first attempt at being Bayesian we assumed flat uniform priors which means that we provided purely non-informative priors. As such the Bayesian approach is purely data driven which means that the likelihood determines everything. This illustrates nicely the point that maximum likelihood for a linear model is just a special case of the fully Bayeian model with uniform priors.
@@ -73,7 +73,7 @@ Parameter     | Freq                                   | Bayes 2
 ------------- | -------------------------------------- | -----------
 Intercept     | 959.19 (382.23, 1536.15)    | 941.32 (468.09, 1320.55)
 X             | 197.41 (171.04, 223.78)    | 197.55 (177.34, 224.57)
-X^2^          | -1.98 (-2.24, -1.73)    | -1.98 (-2.25, -1.77)
+X<sup>2</sup> | -1.98 (-2.24, -1.73)    | -1.98 (-2.25, -1.77)
  
 Now it's quite apparent to see that we are in much better shape regarding the intercept term while the other estimates stayed more or less in the same range. They were also never bad to begin with. 
  
