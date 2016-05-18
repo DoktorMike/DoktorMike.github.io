@@ -17,9 +17,9 @@ projects measuring soft KPI’s, e.g., awareness, liking, penetration etc.
 In this white paper we’re introducing a new paradigm for implementing a
 real-time continuous sales modeling setup which can deliver updated
 learnings and clear-cut recommendations at the time where they’re
-needed.**
+needed.
 
-Background {#background .unnumbered}
+Background
 ==========
 
 In todays media market, with an abundance of data yet few inferred
@@ -69,7 +69,7 @@ way we make inferences from existing data. Now what’s really neat about
 this approach is that it enables us to make explicit predictions taking
 all the uncertainty into account from our parameters.
 
-Being Bayesian is good {#being-bayesian-is-good .unnumbered}
+Being Bayesian is good
 ----------------------
 
 The ever increasing interest in Bayesian statistics @gelman2013bayesian
@@ -114,7 +114,7 @@ the resulting analytic computations are often intractable in any
 realistically complex model. It has been realized that the ability to
 sample from this distribution is what we really want to be doing.
 
-The remedy {#the-remedy .unnumbered}
+The remedy
 ==========
 
 So far I hope you’ve all jumped on the Bayesian train and agree with me
@@ -124,7 +124,7 @@ of this help existing businesses jump the sales modeling hurdle? Well,
 to be fair, the Bayesian approach is only part of the solution. Let’s
 attach the obstacles one by one.
 
-Cost {#cost .unnumbered}
+Cost
 ----
 
 Truth be told, there is no skipping the initial phase of consolidating
@@ -139,7 +139,7 @@ sending data to your analytics partner, to a human. Us humans are
 wonderful beings and excel at so many things. Keeping track of data and
 being consistent however, is not one of them. Keep this in mind.
 
-Complexity {#complexity .unnumbered}
+Complexity
 ----------
 
 Before diving into the remedy and the solution let’s revisit why I claim
@@ -162,7 +162,7 @@ possible to solve. All of this can be solved today but it requires years
 of training in the domain of statistical learning theory and machine
 learning. Therefor it is wise to leave it to the experts.
 
-Time consuming {#time-consuming .unnumbered}
+Time consuming
 --------------
 
 Remember all of those parameters we talked about before? Well there’s
@@ -196,7 +196,7 @@ Due to these challenges and the vast experience required to tune
 statistical models it is something best left outsourced unless you have
 a large team of highly skilled data scientists inhouse.
 
-Slow time-to-market {#slow-time-to-market .unnumbered}
+Slow time-to-market
 -------------------
 
 Any running sales model is only as good as the just-in-time learnings it
@@ -221,7 +221,7 @@ that the platform is able to refit, test and deploy the updated model
 quickly. Then and only then are you truly sitting in your KPI cockpit
 with an actionable overview of your media performance.
 
-Conclusion {#conclusion .unnumbered}
+Conclusion
 ==========
 
 In this paper we discussed the major hurdles most companies are facing
