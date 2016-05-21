@@ -56,9 +56,9 @@ The question now is how a normal linear regression and a bayesian linear regress
  
 | Parameter     | Freq                                   | Bayes                      |
 |:------------- |:-------------------------------------- |:-------------------------- |
-| Intercept     | $$959.19 (382.23, 1536.15)$$           | 940.97 (297.82, 1511.04)   |
-| X             | 197.41 (171.04, 223.78)                | 197.18 (174.18, 229.97)    |
-| X²            | -1.98 (-2.24, -1.73)                   | -1.97 (-2.29, -1.75)       |
+| Intercept     | $$959.19\, (382.23, 1536.15)$$         | $$940.97\,  (297.82, 1511.04)$$ |
+| X             | $$197.41\,  (171.04, 223.78)$$                | $$197.18\,  (174.18, 229.97)$$    |
+| X²            | $$-1.98\,  (-2.24, -1.73)$$                   | $$-1.97\,  (-2.29, -1.75)$$       |
 
 
 Well hang on a moment, these results are as far as I can see more or less identical! Indeed you are right, as you might recall I did say that we were doing a non-informative Bayes linear regression which means that all of our parameters were fed with uniform non-informative priors. It's rather obvious that there's really no qualitative difference between the confidence intervals created by the frequentist approach and the credibility intervals created by the Bayesian approach. Does this mean that they are the same? Well, no. They are the same because in our first attempt at being Bayesian we assumed flat uniform priors which means that we provided purely non-informative priors. As such the Bayesian approach is purely data driven which means that the likelihood determines everything. This illustrates nicely the point that maximum likelihood for a linear model is just a special case of the fully Bayeian model with uniform priors.
