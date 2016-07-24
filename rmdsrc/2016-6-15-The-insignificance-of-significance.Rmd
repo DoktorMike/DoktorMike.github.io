@@ -57,7 +57,7 @@ For the quick minds out there, you can now see that even though we sampled direc
 
 > We could not successfully refute the NULL hypothesis of the data coming from a gaussian distribution on a 5% significance level.
 
-but that is also all we can say. This does not make it more probable that the data really comes from a gaussian distribution. Also in this case a p-value of $$0.999$$ does not make it less probable that it came from a gaussian as compared to a p-value of $$0.1$$. Now I already hear the opposing people crying "OK, so you're saying that the statistical tests are useless?". Well, in fact, that is not what I'm saying. What I'm saying is that they are tricky bastards that must be treated as such. So to back my last statement up let's look at a scenario where the tests actually do successfully refute something!
+but that is also all we can say. This does not make it more probable that the data really comes from a gaussian distribution. Also in this case a p-value of $$0.999$$ does not make it more probable that it came from a gaussian as compared to a p-value of $$0.1$$. Now I already hear the opposing people crying "OK, so you're saying that the statistical tests are useless?". Well, in fact, that is not what I'm saying. What I'm saying is that they are tricky bastards that must be treated as such. So to back my last statement up let's look at a scenario where the tests actually do successfully refute something!
 
 ## A successful example
 
