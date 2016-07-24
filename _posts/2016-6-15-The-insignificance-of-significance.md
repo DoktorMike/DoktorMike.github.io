@@ -22,13 +22,9 @@ Think hard and long on that for a while. ;) Are you done? Good. Here's the answe
  
 > The probability distribution of p-values under the null hypothesis is uniform!
  
-This means that the probability of you getting a p-value of 0.9999 is exactly the same as getting a p-value of 0.0001. This is in principle all fine except for the tiny little piece of annoying practice of interpreting this as a probability of the null hypothesis being true! Nothing could be further from the truth. Interpreting
+This means that the probability of you getting a p-value of 0.9999 is exactly the same as getting a p-value of 0.0001. This is in principle all fine except for the tiny little piece of annoying practice of interpreting this as a probability of the null hypothesis being true! Nothing could be further from the truth. Interpreting the likelihood of the data as the probability for the hypothesis being true and thus stating
  
-$$P(D|H_0)$$
- 
-as
- 
-$$P(H_0|D)$$
+$$P(D|H_0) = P(H_0|D)$$
  
 is a logical fallacy. 
  
