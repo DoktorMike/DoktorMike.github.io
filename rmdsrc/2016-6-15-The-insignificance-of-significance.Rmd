@@ -80,7 +80,7 @@ $$P(D|H_0) \neq P(H_0|D)$$
 
 But I didn't say what the relationship really is. To remedy this let's talk a little about what we really want to achieve with hypothesis testing. In science we are typically looking at binary versions of the hypothesis space where you have a NULL hypothesis $$H_0$$ and an alternative hypothesis $$H_A$$ where we would like to evaluate the posterior probability of $$H_0$$ being true. This is expressed in the following relation.
 
-$$P(H_0|D) = \frac{P(D|H_0)P(H_0)}{P(D,H_0)+P(D,H_A)}$$
+$$P(H_0|D) = \frac{P(D|H_0)P(H_0)}{P(D,H_0)+P(D,H_A)} = \frac{1}{1+\frac{P(D,H_A)}{P(D,H_0)}}$$
 
 This makes it clear that in order to quantify the probability of $$H_0$$ we have to take the probability of $$H_A$$ into account. This is not surprising since they are not independant. In fact in order to find the probability of the $$H_0$$ hypothesis being true given the observed data we need to evaluate the likelihood of the data along with the prior probability of it being true and relating it to the entire evidence for both hypotheses.
 
@@ -88,3 +88,8 @@ However, we don't always want to look at hypothesis spaces only featuring two po
 
 $$P(H_0|D) = \frac{P(D|H_0)P(H_0)}{\sum_i P(D,H_i)}$$
 
+This relationship is worth remembering each time you design your experiments. It is the foundation of sane science and should not be taken too lightly. This little piece was just to remind you of the dangers of using p-values and plug and play formulas from your statistics classes. So as always here's a bit of advice
+
+> Write down the model and the assumptions explicitely and then do the inference!
+
+That's all for now.
