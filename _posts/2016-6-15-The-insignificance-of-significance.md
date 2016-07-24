@@ -22,7 +22,15 @@ Think hard and long on that for a while. ;) Are you done? Good. Here's the answe
  
 > The probability distribution of p-values under the null hypothesis is uniform!
  
-This means that the probability of you getting a p-value of 0.9999 is exactly the same as getting a p-value of 0.0001. This is in principle all fine except for the tiny little piece of annoying practice of interpreting this as a probability of the null hypothesis being true! Nothing could be further from the truth. Interpreting $$P(D|H_0)$$ as $$P(H_0|D)$$ is a logical fallacy. 
+This means that the probability of you getting a p-value of 0.9999 is exactly the same as getting a p-value of 0.0001. This is in principle all fine except for the tiny little piece of annoying practice of interpreting this as a probability of the null hypothesis being true! Nothing could be further from the truth. Interpreting
+ 
+$$P(D|H_0)$$
+ 
+as
+ 
+$$P(H_0|D)$$
+ 
+is a logical fallacy. 
  
 No no, you say; surely that cannot be true! Well it is. But don't let me convince you with math and words. I'd rather show it to you. In the wonderful statistical language of R there's a nice little test called Shapiro-Wilk Normality Test which basically, well uhmm, tests for normality. The null hypothesis $$H_0$$ in this case is that the samples to test comes from a normal distribution $$y\sim N(\mu, \sigma)$$. Thus in order to reject the null hypothesis we need a small p-value. For old times sake let's require this to be less than $$0.05$$. To start with I will generate 1000 samples from three identical normal distributions with a zero mean and unit variance. They are shown below.
  
