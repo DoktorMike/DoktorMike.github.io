@@ -1,0 +1,58 @@
+---
+title: "The truth about priors and overfitting"
+author: "Dr. Michael Green"
+date: "July 24, 2016"
+output: html_document
+layout: post
+published: false
+status: process
+use_math: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(rstan)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(scales)
+library(dautility)
+library(dastuff)
+library(damodel)
+rstan_options(auto_write = TRUE)
+```
+
+Have you ever thought about how strong a prior is compared to observed data? It's not an entirely easy thing to conceptualize. 
+
+```{r definedata, warning=FALSE, echo=FALSE, message=FALSE, error=FALSE}
+x<-seq(1, 100, 1); z<-seq(-49, 50, 1); d<-rep(0, length(x)); d[sample(1:length(d), 1)]<-1
+mydf<-data.frame(y=sin(x/10)+cos(z)+d*5+4+rnorm(length(x), 0, 0.5), x, z, d) 
+# qplot(data=mydf, x, y, geom="line") + theme_blackwood()
+```
+
+```{r lmfit, warning=FALSE, echo=FALSE, message=FALSE, error=FALSE}
+mylm<-lm(y~sin(x/10)+cos(z)+d, data=mydf)
+plotPrediction2(mylm) + theme_blackwood() + xlab("x")
+```
+
+
+```{r test, warning=FALSE, echo=FALSE, message=FALSE, error=FALSE}
+stancode<-"
+data {
+  int<lower=0> N; // number of data items
+  int<lower=0> K; // number of predictors
+  matrix[N, k] x; // predictor matrix
+  vector[N] y; // outcome vector
+}
+parameters {
+  real alpha; // intercept
+  vector[K] beta; // coefficients for predictors
+  real<lower=0> sigma; // error scale
+}
+model {
+  y ~ normal(x * beta + alpha, sigma); // likelihood
+}
+"
+```
+
