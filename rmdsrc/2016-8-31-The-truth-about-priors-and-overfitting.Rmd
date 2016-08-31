@@ -31,7 +31,7 @@ It features a cyclic process with one event represented by the variable $$d$$. T
 
 ```{r definedata, warning=FALSE, echo=FALSE, message=FALSE, error=FALSE}
 x<-seq(1, 100, 1); z<-seq(-49, 50, 1); d<-rep(0, length(x)); d[sample(1:length(d), 1)]<-1
-mydf<-data.frame(y=sin(x/10)+cos(z)+d*5+4+rnorm(length(x), 0, 0.5), x, z, d) 
+mydf<-data.frame(y=sin(x/10)+cos(z)+d*(5+0.5)+4+rnorm(length(x), 0, 0.5), x, z, d) 
 # qplot(data=mydf, x, y, geom="line") + theme_blackwood()
 ```
 
@@ -140,7 +140,7 @@ sfitdf1<-as.data.frame(sfit)
 # plotFit(sfitdf, mydf, 3) + theme_blackwood()
 ```
 
-Thus this model conforms to the the same process as before but with weak priors introduced. The priors here state that the $$\beta$$ parameters are all gaussian distributions with a lot of variance around them meaning that we are not very confident about what these values should be. If you look at the table above where we had no priors, which basically just means that our priors were uniform distributions between minus infinity and infinity, you can see that the inference is not much different at all. `r sfitdf1[, grep("beta", colnames(sfitdf))] %>% gather(parameter) %>% group_by(parameter) %>% summarise(Q1=quantile(value, 0.25), mean=mean(value), Q3=quantile(value, 0.75)) %>% knitr::kable(digits = c(0, 2,2,2))`
+Thus this model conforms to the the same process as before but with weak priors introduced. The priors here state that the $$\beta$$ parameters are all Gaussian distributions with a lot of variance around them meaning that we are not very confident about what these values should be. If you look at the table above where we had no priors, which basically just means that our priors were uniform distributions between minus infinity and infinity, you can see that the inference is not much different at all. `r sfitdf1[, grep("beta", colnames(sfitdf))] %>% gather(parameter) %>% group_by(parameter) %>% summarise(Q1=quantile(value, 0.25), mean=mean(value), Q3=quantile(value, 0.75)) %>% knitr::kable(digits = c(0, 2,2,2))`
 
 One thing to note is that the credible interval has not shrunken which means that the models uncertainty about each parameters is about the same. Now why is that? Well for starters in the first model we even if we "believed" that infinity was a reasonable guess for each parameter the sampler found it's way. The mean of the posterior distributions for each parameter is nearly identical between the models. So that's great. Two infinitely different priors results in the same average inference. Let's try to see at what scale the priors would change the average inference. See the new model description here.
 
@@ -254,7 +254,7 @@ gather(tmpdf, Distribution, Value) %>% ggplot(aes(x=Value, fill=Distribution)) +
   theme_blackwood() + scale_fill_blackwood() + geom_vline(xintercept = 5)
 ```
 
-As you can see the prior is in the vicinity of the true value but not really covering it. This is not necessarily a bad thing as being ignorant allows data to move you into insane directions. An example of this is shown in the plot below where we plot the prior from model three against the posterior of model three. It's apparent that the data was allowed to drive the value to a too high value meaning that we are overfitting. This is exactly why maximum likelihoos suffers from the curse of dimensionality. We shouldn't be surprised by this since we literally told the model that a value up to 10 is quite probable. 
+As you can see the prior is in the vicinity of the true value but not really covering it. This is not necessarily a bad thing as being ignorant allows data to move you into insane directions. An example of this is shown in the plot below where we plot the prior from model three against the posterior of model three. It's apparent that the data was allowed to drive the value to a too high value meaning that we are overfitting. This is exactly why maximum likelihood suffers from the curse of dimensionality. We shouldn't be surprised by this since we literally told the model that a value up to 10 is quite probable. 
 
 ```{r priorpostplot2, warning=FALSE, echo=FALSE, message=FALSE, error=FALSE}
 tmpdf<-data.frame(Prior=rnorm(nrow(sfitdf3), 0, 10), Posterior=sfitdf2$beta_d)
@@ -320,7 +320,7 @@ sfitdf4<-as.data.frame(sfit)
 
 `r sfitdf4[, grep("beta", colnames(sfitdf))] %>% gather(parameter) %>% group_by(parameter) %>% summarise(Q1=quantile(value, 0.25), mean=mean(value), Q3=quantile(value, 0.75)) %>% knitr::kable(digits = c(0, 2,2,2))`
 
-It's quite apparent that here we were overly confident and the results are now quite a bit off from the truth. However, I would argue that this is a rather sane prior still. Why? Because we had no relation to the problem at hand and it's better in this setting to be a bit conservative. As such we were successful. We stated our mind and the "one" datapoint updated it by a lot. Now imagine if we would have had two? As such maybe it's not so bad that one data point was able to update our opinion quite a bit and maybe it wasn't such a bad idea to be conservative in the first place?
+It's quite apparent that here we were overly confident and the results are now quite a bit off from the truth. However, I would argue that this is a rather sane prior still. Why? Because we had no relation to the problem at hand and it's better in this setting to be a bit conservative. As such we were successful. We stated our mind and the "one" data point updated it by a lot. Now imagine if we would have had two? As such maybe it's not so bad that one data point was able to update our opinion quite a bit and maybe it wasn't such a bad idea to be conservative in the first place?
 
 ```{r priorpostplot3, warning=FALSE, echo=FALSE, message=FALSE, error=FALSE}
 tmpdf<-data.frame(Prior=rnorm(nrow(sfitdf3), 0, 0.5), Posterior=sfitdf4$beta_d)
@@ -330,4 +330,16 @@ gather(tmpdf, Distribution, Value) %>% ggplot(aes(x=Value, fill=Distribution)) +
 
 Naturally whether or not it's recommended to be conservative is of course up to the application at hand. For an application determining whether a suspect is indeed guilty of the crime in the face of evidence it is perhaps quite natural to be skeptic of the "evidence" meanwhile for a potential investment it may pay off to be more risky and accept a higher error rate at the hope of a big win. 
 
+# Conclusion
 
+So what did we learn from all of this? Well hopefully you learned that setting priors is not something you learn over-night. It takes practice to get a feel for it. However, the principles are exceedingly obvious. I will leave you with some hard core advice on how to set priors.
+
+* Always set the priors in the vicinity of what you believe the truth is
+* Always set the priors such that they reflect the same order of magnitude as the phenomenon you're trying to predict
+* Don't be overconfident, leave space for doubt
+* Never use completely uninformative priors
+* Whenever possible refrain from using uniform distributions
+* Always sum up the consequence of all of your priors such that if no data was available your model still predicts in the same order of magnitude as your observed response
+* Be careful, and be honest! Never postulate very informative priors on results you WANT to be true. It's OK if you BELIEVE them to be true. Don't rest your mind until you see the difference.
+
+Happy hacking!
