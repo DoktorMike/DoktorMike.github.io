@@ -98,6 +98,22 @@ ul ul, ol ul {
   list-style-type: circle;
 }
 
+// Mikey fix start for tables
+td, th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}
+
+// Mikey fix ends for tables
+
 em, i {
   font-style: italic;
 }
