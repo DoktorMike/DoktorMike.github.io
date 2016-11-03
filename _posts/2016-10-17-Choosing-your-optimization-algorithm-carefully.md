@@ -37,6 +37,7 @@ The algorithms we will look into are primarily implemented in *NLopt* except the
 * Low-storage Broyden–Fletcher–Goldfarb–Shanno algorithm ([LBFGS](http://www.cs.nyu.edu/~overton/papers/pdffiles/bfgs_inexactLS.pdf))
 * Augmented Lagrangian algorithm ([AUGLAG](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.72.6121))
 * Nelder-Mead Simplex ([NELDERMEAD](https://dx.doi.org/10.1093%2Fcomjnl%2F7.4.308))
+* Sequential Quadratic Programming ([SLSQP](http://www.neos-guide.org/content/sequential-quadratic-programming))
  
 As some algorithms (or even most of them) may depend heavily on initial values and starting points we run 500 optimization with randomized starting points for all algorithms. Each algorithm receive the same starting point for each iteration. Thus, each algorithm gets to start it's optimization in 500 different locations. Seems like a fair setup to me.
  
@@ -55,16 +56,17 @@ That looks quite bad actually. Especially for many of the gradient based approac
 So where did the optimizations end up on the Bolognese optimization on average? Well in order to see that we will use robust statistics instead to make sure we actually select values that were optmized. Robust statistics in this case will be the median. So now we illustrate the median cook times found by the different algorithms. For fun we will show you the mean results as well. Just for your educational pleasure.
  
 
-|Algorithm     | Mean| Median| Min|  Max|
-|:-------------|----:|------:|---:|----:|
-|GN_ISRES      | 11.8|   11.9|  10| 11.9|
-|LD_AUGLAG     |  8.6|   10.1|   0| 11.9|
-|LD_AUGLAG_EQ  |  8.5|   10.1|   0| 11.9|
-|LD_LBFGS      |  6.3|    6.8|   0| 11.9|
-|LN_BOBYQA     |  9.6|   11.3|   0| 11.9|
-|LN_COBYLA     |  9.5|   11.3|   0| 11.9|
-|LN_NELDERMEAD | 10.4|   11.3|   0| 11.9|
-|Optim         |  8.4|   10.1|   0| 11.9|
+|Algorithm     | Mean| Median|  Min|  Max|
+|:-------------|----:|------:|----:|----:|
+|GN_ISRES      | 11.8|   11.9| 10.3| 11.9|
+|LD_AUGLAG     |  8.7|   10.1|  0.0| 11.9|
+|LD_AUGLAG_EQ  |  8.8|   10.1|  0.0| 11.9|
+|LD_LBFGS      |  6.7|    6.8|  0.0| 11.9|
+|LD_SLSQP      |  7.0|    6.8|  0.0| 11.9|
+|LN_BOBYQA     |  9.6|   11.3|  0.0| 11.9|
+|LN_COBYLA     |  9.4|   11.3|  0.0| 11.9|
+|LN_NELDERMEAD | 10.0|   11.3|  0.0| 11.9|
+|Optim         |  8.1|   10.1|  0.0| 11.9|
  
 The table above is pretty clear. From an optimization point of view the results are clear from both and average, median, worst and best case scenario. The only potential problem here is timing. Evolutionary algorithms are notoriously slow. So experiment with this yourself and see if you get similar results. 
  
