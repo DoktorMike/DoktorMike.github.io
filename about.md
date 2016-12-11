@@ -12,7 +12,7 @@ I started out building artificial neural networks for helping physicians detect 
 
 After that I spent a couple of years in the financial sector developing business intelligence software that allowed banks and asset management companies to calculate the amount of money they stood to lose on a given trading day.
 
-The last 6 years I've been in the media and marketing industry developing and refining sales modeling and the use of Bayesian inference to quantify the effect different activities have on sales.
+The last many years I've been in the media and marketing industry developing and refining causal modeling and the use of Bayesian inference to quantify the effect different activities have on measurable KPI's.
 
 ### Contact me
 
