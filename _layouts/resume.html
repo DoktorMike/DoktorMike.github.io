@@ -11,7 +11,7 @@
 
         <!-- You can turn off the avatar in _config.yml by setting to false -->
         {% if site.resume_avatar == 'true' %}
-        <img src="images/avatar.jpg" alt="my photo" class="avatar" itemprop="image">
+        <img src="https://avatars0.githubusercontent.com/u/4715779?v=3&s=460" alt="my photo" class="avatar" itemprop="image">
         {% endif %}
 
         <!-- Your name is defined in the _config.yml file -->
@@ -23,11 +23,11 @@
           <h2 class="header-title" itemprop="jobTitle">{{ site.resume_title }}</h2>
 
           <!-- This is the markup for the icon links; moved out to an include because it's very verbose, and you shouldn't ever need to edit the markup (unless you want to re-order the icons); if you want to customize which links appear, define them in the _config.yml file -->
-          {% include icon-links.html %}
+          {% include cvicon-links.html %}
         </div>
 
         <div class="executive-summary" itemprop="description">
-          <p>This is the executive summary. You should write a few brief, concise, and meaningful sentences about yourself from a professional context, and your immediate career goals. Make the length appropriate for your needs, but K.I.S.S.</p>
+          <p>Driven artificial intelligence professional and solutions architect with vast experience in statistical modeling, machine learning and data analysis in the marketing and business intelligence domain. Specifically interested in predictive modeling and analytics applied to domain specific problems. Primary goal is to continue introducing state of the art statistical modeling in business intelligence workflows.</p>
         </div>
 
         {% if site.resume_looking_for_work == 'yes' %}
@@ -49,32 +49,40 @@
 
         <!-- Duplicate these resume-item elements and edit accordingly for each job you want to add here -->
         <div class="resume-item" itemscope itemprop="worksFor" itemtype="http://schema.org/Organization">
-          <h3 class="resume-item-title" itemprop="name">Springfield Nuclear Power Plant</h3>
-          <h4 class="resume-item-details" itemprop="description">Safety Inspector &bull; Nov, 1980 &mdash; Present</h4>
-          <p class="resume-item-copy">Write about your core competencies in one or two sentences describing your position. If you held the position for a long time, it could be a longer section, including a couple bullet points:</p>
-          <ul class="resume-item-list">
-            <li>Ate lots of donuts</li>
-            <li>Fell asleep rarely</li>
-            <li>Left promptly at end of day (sometimes earlier)</li>
-          </ul>
-          <p class="resume-item-copy">If you're going to copy paste markup, or edit it, just be sure to keep the appropriate classnames on your new elements for styling purposes.</p>
-
+          <h3 class="resume-item-title" itemprop="name">Blackwood Seven</h3>
+          <h4 class="resume-item-details" itemprop="description">SVP, CAO &bull; Sep, 2013 &mdash; Present</h4>
+          <p class="resume-item-copy">Heading the development of the next generation Bayesian Artificial Intelligence engine for predictive cross-channel media analytics leveraging state of the art statistical science with a SaaS platform with the intent to improve the efficiency and transparency in the media market.</p>
         </div><!-- end of resume-item -->
 
         <!-- another resume item -->
         <div class="resume-item" itemscope itemprop="worksFor" itemtype="http://schema.org/Organization">
-          <h3 class="resume-item-title" itemprop="name">Sir Putt-A-Lot's Merrie Olde Fun Centre</h3>
-          <h4 class="resume-item-details" itemprop="description">Windmill Crank Operator &bull; Jun, 1978 &mdash; Sept, 1979</h4>
-          <p class="resume-item-copy">If your stint was shorter, feel free to be brief and just call out the most meaningful points of your role. Be concise, and be meaninful. The person reading just needs enough to want to talk to you more about your experience.</p>
-
+          <h3 class="resume-item-title" itemprop="name">Modeling.Green</h3>
+          <h4 class="resume-item-details" itemprop="description">CEO, Founder &bull; Jun, 2013 &mdash; Present</h4>
+          <p class="resume-item-copy">Bringing Artificial Intelligence and Machine learning into the decision making process for Businesses focusing on product pricing and portfolio optimizations.</p>
         </div><!-- end of resume-item -->
 
         <!-- by now you're getting the picture... -->
         <div class="resume-item" itemscope itemprop="worksFor" itemtype="http://schema.org/Organization">
-          <h3 class="resume-item-title" itemprop="name">Simpson Lazer Tag</h3>
-          <h4 class="resume-item-details" itemprop="description">Front Desk Attendant &bull; Jun, 1975 &mdash; May, 1978</h4>
-          <p class="resume-item-copy">Boy, when Marge first told me she was going to the Police Academy, I thought it would be fun and exciting, you know, like the movie... Spaceballs. But instead, it's been painful and disturbing, like the movie Police Academy.</p>
+          <h3 class="resume-item-title" itemprop="name">Data Intelligence</h3>
+          <h4 class="resume-item-details" itemprop="description">CTO &bull; Nov, 2009 &mdash; Oct, 2013</h4>
+          <p class="resume-item-copy">I managed a group of statistical analysts and data researchers. We worked with fact based marketing where we provided clients with strategic and tactical recommendations based on robust statistical models. These models were developed and deployed using R, Business Objects, and Microsoft BI tools.</p>
+          <ul class="resume-item-list">
+           <li>Business Performance optimization</li>
+           <li>Churn minimization</li>
+           <li>Identifying sales drivers</li>
+           <li>Customer retention strategies</li>
+           <li>Price optimization</li>
+           <li>Portfolio optimization</li>
+           <li>ROI Analysis</li>
+           <li>Marketing mix modeling</li>
+         </ul>
+        </div><!-- end of resume-item -->
 
+        <div class="resume-item" itemscope itemprop="worksFor" itemtype="http://schema.org/Organization">
+          <h3 class="resume-item-title" itemprop="name">SimCorp</h3>
+          <h4 class="resume-item-details" itemprop="description">Senior Business Intelligence Consultant &bull; Aug, 2008 &mdash; Oct, 2009</h4>
+          <p class="resume-item-copy">I was helping out in the risk domain where I developed efficient Monte Carlo algorithms for the estimation of Value at Risk (VaR). Other than that I developed and maintained business intelligence reports for customers using SimCorp's product Dimension. This task mainly involved working with Crystal Reports. In another project I was working with streamlining a new technology for Dimension called Client Reporting which enables customers to deliver reports to their clients in a well structured manner.</p>
+          <p class="resume-item-copy">I was also the Team Leader for the Reporting team in the Technical Deployment division. The team was responsible for the creation of business intelligence reports within domains such as risk, performance and general transactions reports. Other than that our activities involved implementation, education, best practice development, support and strategic development.</p>
         </div><!-- end of resume-item -->
 
       </section>
@@ -90,9 +98,15 @@
         </header>
 
         <div class="resume-item" itemscope itemprop="alumniOf" itemtype="http://schema.org/CollegeOrUniversity">
-          <h3 class="resume-item-title" itemprop="name">Springfield College</h3>
-          <h4 class="resume-item-details" itemprop="description">Associates Degree, Business Management &bull; 1984 &mdash; 1986</h4>
-          <p class="resume-item-copy">If you had any meaningful roles at college, feel free to write about them here.</p>
+          <h3 class="resume-item-title" itemprop="name">Lund University</h3>
+          <h4 class="resume-item-details" itemprop="description">Doctor of Philosophy (PhD), Theoretical Physics &bull; 2004 &mdash; 2008</h4>
+          <p class="resume-item-copy">Graduated from Lund University, with the doctoral dissertation "Improving diagnosis of acute coronary syndromes in an emergency setting: A machine learning approach", in 2008. Received the Markussen award for young talented researchers.</p>
+        </div>
+
+        <div class="resume-item" itemscope itemprop="alumniOf" itemtype="http://schema.org/CollegeOrUniversity">
+          <h3 class="resume-item-title" itemprop="name">Lund University</h3>
+          <h4 class="resume-item-details" itemprop="description">Master of Science (MSc), Computer Science &bull; 2000 &mdash; 2004</h4>
+          <p class="resume-item-copy">Specialized in artificial intelligence for robots. In particular I participated in <a href="http://www.robocup.org">RoboCup</a> 2003.</p>
         </div>
 
       </section>
@@ -132,18 +146,25 @@
         </header>
 
         <div class="resume-item">
-          <h4 class="resume-item-details">Donut design</h4>
-          <p class="resume-item-copy">Sprinkle art, icing design, eclair management, taste testing, donut/coffee pairing research</p>
+          <h4 class="resume-item-details">Statistical learning</h4>
+          <p class="resume-item-copy">Artificial Neural Networks, Deep Learning, Support Vector Machines, Generalized Linear Modeling, Bayesian Hierarchical Modeling</p>
         </div>
 
         <div class="resume-item">
-          <h4 class="resume-item-details">Craft beer brewing</h4>
-          <p class="resume-item-copy">Hops inspection, brew testing, distribution management, bottle label design, festival and event management</p>
+          <h4 class="resume-item-details">Programming &amp; scripting</h4>
+          <p class="resume-item-copy">R, C++, Perl</p>
+          <p class="resume-item-copy">SQL, Bash, HTML, Markdown, RMarkdown</p>
         </div>
 
         <div class="resume-item">
-          <h4 class="resume-item-details">Family leadership</h4>
-          <p class="resume-item-copy">Bread winning, conflict resolution, couch inspection, TV longevity testing</p>
+          <h4 class="resume-item-details">Leadership</h4>
+          <p class="resume-item-copy">Conflict resolution, Sparring, Situational leadership</p>
+        </div>
+
+        <div class="resume-item">
+          <h4 class="resume-item-details">Productivity</h4>
+          <p class="resume-item-copy">LateX, Gimp, LibreOffice, MS Office, MS PowerBI</p>
+          <p class="resume-item-copy">MariaDB, MySQL, MongoDB</p>
         </div>
 
       </section>
@@ -159,21 +180,9 @@
         </header>
 
         <div class="resume-item">
-          <h3 class="resume-item-title" itemprop="award">Springfield Nuclear Power Plant</h3>
-          <h4 class="resume-item-details">Outstanding Achievement &bull; 2010</h4>
-          <p class="resume-item-copy">Awarded for stopping a nuclear meltdown, even though I also started it.</p>
-        </div>
-
-        <div class="resume-item">
-          <h3 class="resume-item-title" itemprop="award">Duff Beer Customer of the year</h3>
-          <h4 class="resume-item-details">1997 &mdash; 2001, 2003, 2008 &mdash; 2012</h4>
-          <p class="resume-item-copy">Honored by <a href="https://en.wikipedia.org/wiki/Duff_Beer">Duff Beer</a> for being an outstanding customer several years straight. Qualifications included most beer consumed at a bar, most beer purchased, and most beer ralphed.</p>
-        </div>
-
-        <div class="resume-item">
-          <h3 class="resume-item-title" itemprop="award">Moe's Patron of the Month</h3>
-          <h4 class="resume-item-details">12/2001, 8/2004</h4>
-          <p class="resume-item-copy">Specifically this prestigious awarded twice for stopping a robber with my belly.</p>
+          <h3 class="resume-item-title" itemprop="award">Markussens scholarship</h3>
+          <h4 class="resume-item-details">Talented young researcher award &bull; 2008</h4>
+          <p class="resume-item-copy">Awarded for my research in Artificial Neural Networks.</p>
         </div>
 
       </section>
@@ -224,8 +233,7 @@
       {% endif %}
 
       <footer class="page-footer">
-        <p class="footer-line">Made by <a href="http://twitter.com/jglovier">@jglovier</a>. Fork me on <a href="https://github.com/jglovier/resume-template">GitHub</a>.</p>
-        <p class="footer-line">If this is your live resume, you can modify or remove this part. ;-)</p>
+        <p class="footer-line">Made by <a href="http://doktormike.github.io">Mike</a></p>
       </footer>
 
     </div>
