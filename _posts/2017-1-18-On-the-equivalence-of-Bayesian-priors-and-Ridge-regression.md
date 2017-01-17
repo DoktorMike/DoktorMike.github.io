@@ -20,7 +20,9 @@ Any regression problem can be expressed as an implementation of a probabilistic 
  
 $$p(y, X, \beta)=p(\beta|y, X)p(y, X)=p(\beta|y, X)p(y)p(X)$$
  
+ 
 In this view it is clear that we want to learn something about $\beta$ since that's the unknowns. The other parts we have observed data on. So we would like to say something clever about $p(\beta|y, X)$. How do we go about doing that? Well for starters we need to realize that $p(y, X, \beta)$ can actually be written as 
+ 
  
 $$p(y, X, \beta)=p(y|\beta, X)p(\beta, X)=p(y|\beta, X)p(\beta)p(X)$$ 
  
