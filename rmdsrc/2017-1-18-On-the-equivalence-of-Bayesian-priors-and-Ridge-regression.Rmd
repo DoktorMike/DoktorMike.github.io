@@ -27,12 +27,12 @@ Today I'm going to take you through the comparison of a Bayesian formalism for r
 
 # A probabilistic formulation
 
-Any regression problem can be expressed as an implementation of a probabilistic formulation. For instance what we typically have at our hand is a dependent variable $y$, a matrix $X$ of covariates and a parameter vector $\beta$. The dependent variable consists of data we would like to learn something about or be able to explain. As such we wish to model it's dynamics via the $\beta$ through $X$. The joint probability distribution for these three ingredients is given simply as $p(y, X, \beta)$. This is the most general form of representing a regression problem probabilistically. However, it's not very useful, so in order to make it a bit more tangible let's decompose this joint probability like this.
+Any regression problem can be expressed as an implementation of a probabilistic formulation. For instance what we typically have at our hand is a dependent variable $$y$$, a matrix $$X$$ of covariates and a parameter vector $$\beta$$. The dependent variable consists of data we would like to learn something about or be able to explain. As such we wish to model it's dynamics via the $$\beta$$ through $$X$$. The joint probability distribution for these three ingredients is given simply as $$p(y, X, \beta)$$. This is the most general form of representing a regression problem probabilistically. However, it's not very useful, so in order to make it a bit more tangible let's decompose this joint probability like this.
 
 $$p(y, X, \beta)=p(\beta|y, X)p(y, X)=p(\beta|y, X)p(y)p(X)$$
 
 
-In this view it is clear that we want to learn something about $\beta$ since that's the unknowns. The other parts we have observed data on. So we would like to say something clever about $p(\beta|y, X)$. How do we go about doing that? Well for starters we need to realize that $p(y, X, \beta)$ can actually be written as 
+In this view it is clear that we want to learn something about $$\beta$$ since that's the unknowns. The other parts we have observed data on. So we would like to say something clever about $$p(\beta|y, X)$$. How do we go about doing that? Well for starters we need to realize that $$p(y, X, \beta)$$ can actually be written as 
 
 
 $$p(y, X, \beta)=p(y|\beta, X)p(\beta, X)=p(y|\beta, X)p(\beta)p(X)$$ 
