@@ -44,11 +44,35 @@ which is just a derivation of Baye's rule. Now we actually have something a bit 
  
 The second term in the nominator on the right hand side is our prior $p(\beta)$ which we will also consider gaussian. Thus, we will set $p(\beta)=\mathcal{N}(0, \alpha I)$ indicating that the parameters are independant from each other and most likely centered around $0$ with a known standard deviation of $\alpha$. The last term is the denominator $p(y)$ which in this setting functions as the evidence. This is also the normalizing constant that makes sure that we can interpret the right hand side probabilistically.
  
-That's it! We now have the pieces we need to push the inference button. This is often for more complicated models done by utilizing Markov Chain Monte Carlo methods to sample the distributions. If we are not interested in the distribution but only the average estimates for the parameters we can just turn this into an optimization problem instead by realizing that $$p(\beta\vert y, X)=\frac{p(y\vert \beta, X)p(\beta)}{p(y)}\propto p(y\vert \beta, X)p(\beta)$$ since $p(y)$ just functions as a normalizing constant and doesn't change the location of the $\beta$ that would yield the maximum probability. Thus we can set up the optimization problem as $$\mathcal{L}(\beta)=\prod_{t=1}^T \mathcal{N}(y_t-\beta x_t; 0, \sigma)\mathcal{N}(\beta; 0, \alpha I)$$ and maximize this function. Normally when we solve optimization problems it's easier and nicer to turn it into a minimization problem instead of a maximization problem. This is easily done by minimizing $$-\ln \mathcal{L}(\beta)=-\sum_{t=1}^T \ln \mathcal{N}(y_t-\beta x_t; 0, \sigma)- \ln\mathcal{N}(\beta; 0, \alpha I)$$ as opposed to the equation before. For the sake of clarity let's assume from now on that we only have one independent variable and only one parameter $\beta$. Since we know that $$\mathcal{N}(x;\mu, \sigma)=\frac{1}{\sqrt{2\pi\sigma^2}}\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)$$ we can easily unfold the logarithms to reveal $$-\ln \mathcal{L}(\beta)=-\sum_{t=1}^T\left( -C_1-\frac{\left(y_t-\beta x_t- 0\right)^2}{2\sigma^2}\right) - C_2 + \frac{(\beta-0)^2}{2\alpha^2}$$ which can be more nicely written as $$-\ln \mathcal{L}(\beta)=\sum_{t=1}^T\frac{\left(y_t-\beta x_t\right)^2}{2\sigma^2} + \frac{\beta^2}{2\alpha^2} + C$$ where $C=TC_1 - C_2$. As such putting a Gaussian prior on your $\beta$ is equivalent penalizing solutions that differ from $0$ by a factor of $1/(2\alpha^2)$ i.e. 1 divided by two times the variance of the Gaussian. Thus, the smaller the variance, the higher our prior confidence is that the solution should be close to zero. The larger the variance the more uncertain we are about where the solution should end up.
+That's it! We now have the pieces we need to push the inference button. This is often for more complicated models done by utilizing Markov Chain Monte Carlo methods to sample the distributions. If we are not interested in the distribution but only the average estimates for the parameters we can just turn this into an optimization problem instead by realizing that 
+ 
+$$p(\beta\vert y, X)=\frac{p(y\vert \beta, X)p(\beta)}{p(y)}\propto p(y\vert \beta, X)p(\beta)$$
+ 
+since $p(y)$ just functions as a normalizing constant and doesn't change the location of the $\beta$ that would yield the maximum probability. Thus we can set up the optimization problem as
+ 
+$$\mathcal{L}(\beta)=\prod_{t=1}^T \mathcal{N}(y_t-\beta x_t; 0, \sigma)\mathcal{N}(\beta; 0, \alpha I)$$
+ 
+and maximize this function. Normally when we solve optimization problems it's easier and nicer to turn it into a minimization problem instead of a maximization problem. This is easily done by minimizing
+ 
+$$-\ln \mathcal{L}(\beta)=-\sum_{t=1}^T \ln \mathcal{N}(y_t-\beta x_t; 0, \sigma)- \ln\mathcal{N}(\beta; 0, \alpha I)$$
+ 
+as opposed to the equation before. For the sake of clarity let's assume from now on that we only have one independent variable and only one parameter $\beta$. Since we know that 
+ 
+$$\mathcal{N}(x;\mu, \sigma)=\frac{1}{\sqrt{2\pi\sigma^2}}\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)$$
+ 
+we can easily unfold the logarithms to reveal
+ 
+$$-\ln \mathcal{L}(\beta)=-\sum_{t=1}^T\left( -C_1-\frac{\left(y_t-\beta x_t- 0\right)^2}{2\sigma^2}\right) - C_2 + \frac{(\beta-0)^2}{2\alpha^2}$$
+ 
+which can be more nicely written as
+ 
+$$-\ln \mathcal{L}(\beta)=\sum_{t=1}^T\frac{\left(y_t-\beta x_t\right)^2}{2\sigma^2} + \frac{\beta^2}{2\alpha^2} + C$$
+ 
+where $C=TC_1 - C_2$. As such putting a Gaussian prior on your $\beta$ is equivalent penalizing solutions that differ from $0$ by a factor of $1/(2\alpha^2)$ i.e. 1 divided by two times the variance of the Gaussian. Thus, the smaller the variance, the higher our prior confidence is that the solution should be close to zero. The larger the variance the more uncertain we are about where the solution should end up.
  
 # Ridge regression
  
-The problem of regression can be formulated differently than we did previously, i.e., we don't need to formulate it probabilistically. In essance what we could do is state that we have a set of independent equations that we would like to solve like this $$||X\beta-y||^2$$ where the variables and parameters have the same interpretation as before. This is basically Ordinary Least Squares (OLS) which suffers from overfitting and sensitivity to outliers and multicollinearity. So what Ridge regression does is to introduce a penalty term to this set of equations like this $$||X\beta-y||^2+||\Gamma\beta||^2$$ where $\Gamma$ is typically chosen to be $\gamma I$. This means that all values in the parameter vector $\beta$ should be close to 0. Continuing along this track we can select a dumbed down version of this equation to show what's going on for a simple application of one variable $x$ and one parameter $\beta$. In this case $$||X\beta-y||^2+||\gamma I\beta||^2$$ turns into $$\sum_{t=1}^T(y_t-\beta x_t)^2+\gamma^2\beta^2$$ which you may recognize from before. Not convinced? Well let's look into the differences.
+The problem of regression can be formulated differently than we did previously, i.e., we don't need to formulate it probabilistically. In essance what we could do is state that we have a set of independent equations that we would like to solve like this $$\Vert X\beta-y\Vert^2$$ where the variables and parameters have the same interpretation as before. This is basically Ordinary Least Squares (OLS) which suffers from overfitting and sensitivity to outliers and multicollinearity. So what Ridge regression does is to introduce a penalty term to this set of equations like this $$\Vert X\beta-y\Vert^2+\Vert \Gamma\beta\Vert^2$$ where $\Gamma$ is typically chosen to be $\gamma I$. This means that all values in the parameter vector $\beta$ should be close to 0. Continuing along this track we can select a dumbed down version of this equation to show what's going on for a simple application of one variable $x$ and one parameter $\beta$. In this case $$\Vert X\beta-y\Vert^2+\Vert \gamma I\beta\Vert^2$$ turns into $$\sum_{t=1}^T(y_t-\beta x_t)^2+\gamma^2\beta^2$$ which you may recognize from before. Not convinced? Well let's look into the differences.
  
 Probabilistic formulation | Ridge regression
 -------------- | ----------------
