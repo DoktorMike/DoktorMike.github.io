@@ -24,7 +24,15 @@ In this view it is clear that we want to learn something about $\beta$ since tha
  
 $$p(y, X, \beta)=p(y|\beta, X)p(\beta, X)=p(y|\beta, X)p(\beta)p(X)$$ 
  
-which means that $$p(\beta|y, X)p(y)p(X)=p(y|\beta, X)p(\beta)p(X)$$ and therefor $$p(\beta|y, X)=\frac{p(y|\beta, X)p(\beta)}{p(y)}$$ which is just a derivation of Baye's rule. Now we actually have something a bit more useful at our hands which is ready to be interpreted and implemented. What do I mean by implemented? Seems like an odd thing to say about probability distributions right? As weird as it may seem we actually haven't given the probability distributions a concise mathematical representation. This is of course necessary for any kind of inference. So let's get to it. The first term I would like to describe is the likelihood i.e. the $p(y|\beta, X)$ which describes the likelihood of observing the data given the covariance matrix $X$ and a set of parameters $\beta$. For simplicity let's say this probability distribution is gaussian thus taking the following form $p(y|\beta, X)=\mathcal{N}(y-\beta X; 0, \sigma)$. This corresponds to setting up a measurement model $y_t = \beta x_t + \epsilon$ where $\epsilon=\mathcal{N}(0, \sigma)$.
+which means that 
+ 
+$$p(\beta|y, X)p(y)p(X)=p(y|\beta, X)p(\beta)p(X)$$ 
+ 
+and therefor 
+ 
+$$p(\beta|y, X)=\frac{p(y|\beta, X)p(\beta)}{p(y)}$$
+ 
+which is just a derivation of Baye's rule. Now we actually have something a bit more useful at our hands which is ready to be interpreted and implemented. What do I mean by implemented? Seems like an odd thing to say about probability distributions right? As weird as it may seem we actually haven't given the probability distributions a concise mathematical representation. This is of course necessary for any kind of inference. So let's get to it. The first term I would like to describe is the likelihood i.e. the $p(y|\beta, X)$ which describes the likelihood of observing the data given the covariance matrix $X$ and a set of parameters $\beta$. For simplicity let's say this probability distribution is gaussian thus taking the following form $p(y|\beta, X)=\mathcal{N}(y-\beta X; 0, \sigma)$. This corresponds to setting up a measurement model $y_t = \beta x_t + \epsilon$ where $\epsilon=\mathcal{N}(0, \sigma)$.
  
 The second term in the nominator on the right hand side is our prior $p(\beta)$ which we will also consider gaussian. Thus, we will set $p(\beta)=\mathcal{N}(0, \alpha I)$ indicating that the parameters are independant from each other and most likely centered around $0$ with a known standard deviation of $\alpha$. The last term is the denominator $p(y)$ which in this setting functions as the evidence. This is also the normalizing constant that makes sure that we can interpret the right hand side probabilistically.
  
