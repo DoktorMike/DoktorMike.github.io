@@ -72,13 +72,33 @@ where $C=TC_1 - C_2$. As such putting a Gaussian prior on your $\beta$ is equiva
  
 # Ridge regression
  
-The problem of regression can be formulated differently than we did previously, i.e., we don't need to formulate it probabilistically. In essance what we could do is state that we have a set of independent equations that we would like to solve like this $$\Vert X\beta-y\Vert^2$$ where the variables and parameters have the same interpretation as before. This is basically Ordinary Least Squares (OLS) which suffers from overfitting and sensitivity to outliers and multicollinearity. So what Ridge regression does is to introduce a penalty term to this set of equations like this $$\Vert X\beta-y\Vert^2+\Vert \Gamma\beta\Vert^2$$ where $\Gamma$ is typically chosen to be $\gamma I$. This means that all values in the parameter vector $\beta$ should be close to 0. Continuing along this track we can select a dumbed down version of this equation to show what's going on for a simple application of one variable $x$ and one parameter $\beta$. In this case $$\Vert X\beta-y\Vert^2+\Vert \gamma I\beta\Vert^2$$ turns into $$\sum_{t=1}^T(y_t-\beta x_t)^2+\gamma^2\beta^2$$ which you may recognize from before. Not convinced? Well let's look into the differences.
+The problem of regression can be formulated differently than we did previously, i.e., we don't need to formulate it probabilistically. In essance what we could do is state that we have a set of independent equations that we would like to solve like this
+ 
+$$\Vert X\beta-y\Vert^2$$
+ 
+where the variables and parameters have the same interpretation as before. This is basically Ordinary Least Squares (OLS) which suffers from overfitting and sensitivity to outliers and multicollinearity. So what Ridge regression does is to introduce a penalty term to this set of equations like this
+ 
+$$\Vert X\beta-y\Vert^2+\Vert \Gamma\beta\Vert^2$$
+ 
+where $\Gamma$ is typically chosen to be $\gamma I$. This means that all values in the parameter vector $\beta$ should be close to 0. Continuing along this track we can select a dumbed down version of this equation to show what's going on for a simple application of one variable $x$ and one parameter $\beta$. In this case
+ 
+$$\Vert X\beta-y\Vert^2+\Vert \gamma I\beta\Vert^2$$
+ 
+turns into
+ 
+$$\sum_{t=1}^T(y_t-\beta x_t)^2+\gamma^2\beta^2$$
+ 
+which you may recognize from before. Not convinced? Well let's look into the differences.
  
 Probabilistic formulation | Ridge regression
 -------------- | ----------------
 $\sum_{t=1}^T\frac{\left(y_t-\beta x_t\right)^2}{2\sigma^2} + \frac{\beta^2}{2\alpha^2} + C$   | $\sum_{t=1}^T(y_t-\beta x_t)^2+\gamma^2\beta^2$
  
-Here it's pretty obvious to see that they are equivalent. The constant $C$ plays no role in the minimization of these expressions. Neither does the denominator $2\sigma^2$. Thus if we set $\lambda=\gamma^2=1/(2\alpha^2)$ the equivalence is clear and we see that what we are really minimizing is $$\sum_{t=1}^T(y_t-\beta x_t)^2+\lambda\beta^2$$ which concludes my point.
+Here it's pretty obvious to see that they are equivalent. The constant $C$ plays no role in the minimization of these expressions. Neither does the denominator $2\sigma^2$. Thus if we set $\lambda=\gamma^2=1/(2\alpha^2)$ the equivalence is clear and we see that what we are really minimizing is 
+ 
+$$\sum_{t=1}^T(y_t-\beta x_t)^2+\lambda\beta^2$$
+ 
+which concludes my point.
  
 # Summary
  
