@@ -29,6 +29,7 @@ Today I'm going to take you through the comparison of a Bayesian formalism for r
 
 Any regression problem can be expressed as an implementation of a probabilistic formulation. For instance what we typically have at our hand is a dependent variable $$y$$, a matrix $$X$$ of covariates and a parameter vector $$\beta$$. The dependent variable consists of data we would like to learn something about or be able to explain. As such we wish to model it's dynamics via the $$\beta$$ through $$X$$. The joint probability distribution for these three ingredients is given simply as $$p(y, X, \beta)$$. This is the most general form of representing a regression problem probabilistically. However, it's not very useful, so in order to make it a bit more tangible let's decompose this joint probability like this.
 
+
 $$p(y, X, \beta)=p(\beta|y, X)p(y, X)=p(\beta|y, X)p(y)p(X)$$
 
 
@@ -37,13 +38,18 @@ In this view it is clear that we want to learn something about $$\beta$$ since t
 
 $$p(y, X, \beta)=p(y|\beta, X)p(\beta, X)=p(y|\beta, X)p(\beta)p(X)$$ 
 
+
 which means that 
+
 
 $$p(\beta|y, X)p(y)p(X)=p(y|\beta, X)p(\beta)p(X)$$ 
 
+
 and therefor 
 
+
 $$p(\beta|y, X)=\frac{p(y|\beta, X)p(\beta)}{p(y)}$$
+
 
 which is just a derivation of Baye's rule. Now we actually have something a bit more useful at our hands which is ready to be interpreted and implemented. What do I mean by implemented? Seems like an odd thing to say about probability distributions right? As weird as it may seem we actually haven't given the probability distributions a concise mathematical representation. This is of course necessary for any kind of inference. So let's get to it. The first term I would like to describe is the likelihood i.e. the $p(y|\beta, X)$ which describes the likelihood of observing the data given the covariance matrix $X$ and a set of parameters $\beta$. For simplicity let's say this probability distribution is gaussian thus taking the following form $p(y|\beta, X)=\mathcal{N}(y-\beta X; 0, \sigma)$. This corresponds to setting up a measurement model $y_t = \beta x_t + \epsilon$ where $\epsilon=\mathcal{N}(0, \sigma)$.
 
