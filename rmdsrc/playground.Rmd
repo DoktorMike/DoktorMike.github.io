@@ -33,7 +33,7 @@ To start things off and make sure we have all our ducks in a row for running edw
 sudo pip3 install edward
 ```
 
-If you ran this in the console you should now have a working version of Edward installed in your python environment. So far so good. Just to make sure it works we will run a small Bayesian Neural Network with Gaussian priors for the weights. This is the standard example from Edwards web page. It uses a Variational Inference approach to turn the sampling problem into an optimization problem by approximating the target posterior by a multivariate Gaussian. This approach works amazingly well for quite a few problems. Try to run the code below and check it out. 
+If you ran this in the console you should now have a working version of Edward installed in your python environment. So far so good. Just to make sure it works we will run a small Bayesian Neural Network with Gaussian priors for the weights. This is the standard example from Edwards web page. It uses a Variational Inference approach to turn the sampling problem into an optimization problem by approximating the target posterior by a multivariate Gaussian. This approach works ok for quite a few problems. However, it is a tad hyped as a general purpose inference sampler and should not be considered as a replacement for a real sampler. In either case try to run the code below and check it out. For this toy dataset it works fine. ;) 
 
 ```{r engine='python', engine.path='python3', cache=FALSE, eval=FALSE}
 from __future__ import absolute_import
@@ -123,6 +123,8 @@ mydf.to_csv("mydfpost.csv")
 
 ```
 
+## Checking the priors
+
 If you ran the code you will now have two files called mydfprior.csv and mydfpost.csv which contains, surprise, surprise, your prior and posterior curves based on the samples. As always we plot out the consequence of our priors and check what happens. In the plot below you can see that our priors for the Bayesian Neural Network do not really produce curves that resembles what we're looking for. Not to worry my friends; we don't actually need them to. Look through the graph and make sure you understand why the plot looks the way it does. 
 
 ```{r Prior plot, echo=FALSE, message=FALSE, warning=FALSE}
@@ -134,13 +136,15 @@ library(dplyr)
 priordf <- read.csv("mydfprior.csv")[,-1]
 postdf <- read.csv("mydfpost.csv")[,-1]
 
-priordf %>% mutate(s=1:10) %>% gather(x, y, -s) %>% mutate(x=as.numeric(gsub("X", "", x)), s=as.factor(s)) %>% ggplot(aes(y=y, x=x, group=s)) + geom_point(color="magenta", alpha=0.5) + theme_minimal()
+priordf %>% mutate(s=1:10) %>% gather(x, y, -s) %>% mutate(x=as.numeric(gsub("X", "", x)), s=as.factor(s)) %>% ggplot(aes(y=y, x=x, group=s)) + geom_point(color="magenta", alpha=0.5) + theme_minimal() + geom_point(aes(x=x, y=y, group=0), data=tibble(z=seq(-4,4,length.out = 400), x=1:length(z), y=cos(z)+rnorm(length(z), 0, sqrt(0.1))))
 ```
 
-So the priors hopefully makes sense to you now. How about our posterior? Well as you can see below this plot makes a lot more sense compared to the data we're trying to make sense of. However, you can clearly see some uncertainty in there as well. This is key, since no matter which model we choose there will always be elements of uncertainty involved. The great thing about science is that we don't have to pretend to know everything. We're perfectly comfortable admitting our ignorence. The probabilistic framework allows us to quantify that ignorance!
+## Checking the posteriors
 
 > The problem with the world is not that people know too little. It's that they know so many things that just ain't so.
 -- Mark Twain
+
+So the priors hopefully makes sense to you now. How about our posterior? Well as you can see below this plot makes a lot more sense compared to the data we're trying to make sense of. However, you can clearly see some uncertainty in there as well. This is key, since no matter which model we choose there will always be elements of uncertainty involved. The great thing about science is that we don't have to pretend to know everything. We're perfectly comfortable admitting our ignorence. The probabilistic framework allows us to quantify that ignorance! If you think that sounds like a bad idea I suggest you take a look at the quote abobe. 
 
 ```{r Post plot, echo=FALSE, message=FALSE, warning=FALSE}
 library(ggplot2)
@@ -151,5 +155,7 @@ library(dplyr)
 priordf <- read.csv("mydfprior.csv")[,-1]
 postdf <- read.csv("mydfpost.csv")[,-1]
 
-postdf %>% mutate(s=1:10) %>% gather(x, y, -s) %>% mutate(x=as.numeric(gsub("X", "", x)), s=as.factor(s)) %>% ggplot(aes(y=y, x=x, group=s)) + geom_point(color="magenta", alpha=0.5) + theme_minimal()
+postdf %>% mutate(s=1:10) %>% gather(x, y, -s) %>% mutate(x=as.numeric(gsub("X", "", x)), s=as.factor(s)) %>% ggplot(aes(y=y, x=x, group=s)) + geom_point(color="magenta", alpha=0.5) + theme_minimal() + geom_point(aes(x=x, y=y, group=0), data=tibble(z=seq(-4,4,length.out = 400), x=1:length(z), y=cos(z)+rnorm(length(z), 0, sqrt(0.1))))
 ```
+
+# A more real world problem
