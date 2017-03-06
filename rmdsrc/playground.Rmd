@@ -183,5 +183,6 @@ flightdf %>% group_by(Year=TIME) %>% summarise(Passengers=sum(Value, na.rm = T))
 adf<-tempdf %>% dplyr::filter(date >= "1993-01-01", date < "2016-01-01") %>% group_by(Year=year(date)) %>% summarise(Tempdev=mean(tempdev))
 bdf<-flightdf %>% group_by(Year=TIME) %>% summarise(Passengers=sum(Value, na.rm = T))
 mydf<-inner_join(adf, bdf)
+mydf %>% gather(Metric, Value, -Year) %>% ggplot(aes(y=Value, x=Year, color=Metric)) + facet_grid(Metric~., scales="free_y") + geom_point() + theme_minimal() + geom_smooth(method = lm)
 ```
 
