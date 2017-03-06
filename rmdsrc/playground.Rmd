@@ -144,7 +144,7 @@ priordf %>% mutate(s=1:10) %>% gather(x, y, -s) %>% mutate(x=as.numeric(gsub("X"
 > The problem with the world is not that people know too little. It's that they know so many things that just ain't so.
 -- Mark Twain
 
-So the priors hopefully makes sense to you now. How about our posterior? Well as you can see below this plot makes a lot more sense compared to the data we're trying to make sense of. However, you can clearly see some uncertainty in there as well. This is key, since no matter which model we choose there will always be elements of uncertainty involved. The great thing about science is that we don't have to pretend to know everything. We're perfectly comfortable admitting our ignorence. The probabilistic framework allows us to quantify that ignorance! If you think that sounds like a bad idea I suggest you take a look at the quote abobe. 
+So the priors hopefully makes sense to you now. How about our posterior? Well as you can see below this plot makes a lot more sense compared to the data we're trying to make sense of. However, you can clearly see some uncertainty in there as well. This is key, since no matter which model we choose there will always be elements of uncertainty involved. The great thing about science is that we don't have to pretend to know everything. We're perfectly comfortable admitting our ignorence. The probabilistic framework allows us to quantify that ignorance! If you think that sounds like a bad idea I suggest you take a look at the quote above. 
 
 ```{r Post plot, echo=FALSE, message=FALSE, warning=FALSE}
 library(ggplot2)
@@ -159,3 +159,29 @@ postdf %>% mutate(s=1:10) %>% gather(x, y, -s) %>% mutate(x=as.numeric(gsub("X",
 ```
 
 # A more real world problem
+
+There are few real world problems as pressing as that of global warming. Whenever I'm talking about global warming I feel there are two responses I get which are basically binomially distributed in which the majority of people quickly gets it and the other part are oblivious to facts presented to them. In reality there can be little to no doubt that humans are causing the green house effect. The plot below shows the evolution of the temperature anomaly over time since the 1850's until present time.
+
+```{r globwarmdata, echo=FALSE, message=FALSE, warning=FALSE}
+fnameglobtemp<-"http://www.metoffice.gov.uk/hadobs/hadcrut4/data/current/time_series/HadCRUT.4.5.0.0.monthly_ns_avg.txt"
+tempdf <- read.delim(file = fnameglobtemp, header = F, sep="")
+tempdf <- tempdf[,1:2]; colnames(tempdf)<-c("date", "tempdev")
+tempdf$date <- lubridate::ymd(paste0(as.character(tempdf$date), "/01"))
+ggplot(tempdf, aes(y=tempdev, x=date)) + geom_point() + geom_smooth() + ylab("Temperature deviance") + xlab("Date") + theme_minimal()
+```
+
+As you see there is a clear trend showing that the world is getting warmer. So global warming is indeed happening and it's causing some very measurable real problems for us. There are lobbyist organizations around the world who wishes to tell you that this is not really caused by our increased CO2 emissions since they have well ulterior motives. 
+
+```{r globflightsdata, echo=FALSE, message=FALSE, warning=FALSE}
+flightdf<-read.csv("tran_r_avpa_nm_1_Data.csv")
+flightdf$Value<-as.numeric(gsub(",|:", "", as.character(flightdf$Value)))
+flightdf %>% group_by(Year=TIME) %>% summarise(Passengers=sum(Value, na.rm = T)) %>% ggplot(aes(y=Passengers, x=Year)) + geom_point() + theme_minimal()
+```
+
+
+```{r}
+adf<-tempdf %>% dplyr::filter(date >= "1993-01-01", date < "2016-01-01") %>% group_by(Year=year(date)) %>% summarise(Tempdev=mean(tempdev))
+bdf<-flightdf %>% group_by(Year=TIME) %>% summarise(Passengers=sum(Value, na.rm = T))
+mydf<-inner_join(adf, bdf)
+```
+
