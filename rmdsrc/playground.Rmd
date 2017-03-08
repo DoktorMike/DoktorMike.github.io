@@ -175,14 +175,19 @@ As you see there is a clear trend showing that the world is getting warmer. So g
 ```{r globflightsdata, echo=FALSE, message=FALSE, warning=FALSE}
 flightdf<-read.csv("tran_r_avpa_nm_1_Data.csv")
 flightdf$Value<-as.numeric(gsub(",|:", "", as.character(flightdf$Value)))
-flightdf %>% group_by(Year=TIME) %>% summarise(Passengers=sum(Value, na.rm = T)) %>% ggplot(aes(y=Passengers, x=Year)) + geom_point() + theme_minimal()
+flightdf %>% group_by(Year=TIME) %>% summarise(Passengers=sum(Value, na.rm = T)) %>% ggplot(aes(y=Passengers, x=Year)) + geom_point() + theme_minimal() + scale_y_continuous(labels = comma)
 ```
 
 
-```{r}
+```{r jointplot, echo=FALSE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+library(lubridate)
 adf<-tempdf %>% dplyr::filter(date >= "1993-01-01", date < "2016-01-01") %>% group_by(Year=year(date)) %>% summarise(Tempdev=mean(tempdev))
 bdf<-flightdf %>% group_by(Year=TIME) %>% summarise(Passengers=sum(Value, na.rm = T))
 mydf<-inner_join(adf, bdf)
-mydf %>% gather(Metric, Value, -Year) %>% ggplot(aes(y=Value, x=Year, color=Metric)) + facet_grid(Metric~., scales="free_y") + geom_point() + theme_minimal() + geom_smooth(method = lm)
+mydf %>% gather(Metric, Value, -Year) %>% ggplot(aes(y=Value, x=Year, color=Metric)) + 
+  facet_grid(Metric~., scales="free_y") + geom_point() + theme_minimal() + geom_smooth(method = lm) + 
+  theme(legend.position = "top") + scale_y_continuous(labels=comma, lim=c(0,NA))
 ```
 
