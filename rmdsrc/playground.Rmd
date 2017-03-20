@@ -160,6 +160,8 @@ postdf %>% mutate(s=1:10) %>% gather(x, y, -s) %>% mutate(x=as.numeric(gsub("X",
 
 # A more real world problem
 
+## A first look at the data 
+
 There are few real world problems as pressing as that of global warming. Whenever I'm talking about global warming I feel there are two responses I get which are basically binomially distributed in which the majority of people quickly gets it and the other part are oblivious to facts presented to them. In reality there can be little to no doubt that humans are causing the green house effect. The plot below shows the evolution of the temperature anomaly over time since the 1850's until present time.
 
 ```{r globwarmdata, echo=FALSE, message=FALSE, warning=FALSE}
@@ -175,7 +177,7 @@ As you see there is a clear trend showing that the world is getting warmer. So g
 ```{r globflightsdata, echo=FALSE, message=FALSE, warning=FALSE}
 flightdf<-read.csv("tran_r_avpa_nm_1_Data.csv")
 flightdf$Value<-as.numeric(gsub(",|:", "", as.character(flightdf$Value)))
-flightdf %>% group_by(Year=TIME) %>% summarise(Passengers=sum(Value, na.rm = T)) %>% ggplot(aes(y=Passengers, x=Year)) + geom_point() + theme_minimal() + scale_y_continuous(labels = comma)
+#flightdf %>% group_by(Year=TIME) %>% summarise(Passengers=sum(Value, na.rm = T)) %>% ggplot(aes(y=Passengers, x=Year)) + geom_point() + theme_minimal() + scale_y_continuous(labels = comma)
 ```
 
 
@@ -191,3 +193,115 @@ mydf %>% gather(Metric, Value, -Year) %>% ggplot(aes(y=Value, x=Year, color=Metr
   theme(legend.position = "top") + scale_y_continuous(labels=comma, lim=c(0,NA))
 ```
 
+## Specifying a model
+
+As you might have noticed these data seem a bit like they are suffering from measurament errors. Especially the temperature but also the passengers. So when we also cannot trust the data to be point measurements what do we do? Well we create an error correction model. Since we are using probability we can express any kind of measurements as a probabilistic process. Below you'll find code for the error correction model for the deviance in global temperature expressed in Edward. Mathematically the error correction model is
+
+$$ \begin{align}
+X_t & \sim \mathcal N(\mu_{X,t}, \sigma_X)\\
+\mu_{X,t} &\sim \mathcal N(0, 1)\\
+\sigma_X &= 0.1 
+\end{align} $$
+
+where you can see that we fixed the noise so that we inform the model of the scale of the errors that we believe we will observe. If this is set too high then naturally nothing will emerge since the error is much larger than the signal. Be aware of these things in general when you express your likelihood functions!
+
+Check out the math above and make sure you understand the code below to see how Edward materializes this model. It's slightly different from Stan but you should be able to recognise most of the model setup. Do not worry too much about all the book keeping for extraxting and merging the priors and posteriors. Especially the last part where I export the distributions. I do this because the plots I will show you soon will be done in R. Not because they cannot be done in Python, but because doing them in python makes me want to kill myself.
+
+```{r engine='python', engine.path='python3', cache=FALSE, eval=TRUE, warning=FALSE, error=FALSE, include=TRUE, results='hide'}
+import tensorflow as tf
+import edward as ed
+import pandas as pd
+import numpy as np
+from ggplot import *
+from edward.models import Normal, Bernoulli
+import matplotlib.pyplot as plt
+
+mydf = pd.read_csv("../humanglobwarm.csv")
+
+N = mydf.shape[0]
+D = mydf.shape[1]
+
+# Define the model
+x_mu = Normal(mu=tf.zeros(N), sigma=0.5*tf.ones([]))
+x = Normal(mu=x_mu, sigma=0.1*tf.ones([]))
+
+# VI placeholder
+qx_mu = Normal(mu=tf.Variable(tf.zeros(N)), sigma=tf.nn.softplus(tf.Variable(0.5*tf.ones(N))))
+
+# Set up data and the inference method to Kullback Leibler
+x_train = mydf.get("Tempdev").reshape([N,1])
+sess = ed.get_session()
+data = {x: x_train[:,0]}
+inference = ed.KLqp({x_mu: qx_mu}, data)
+
+# Set up for samples from models
+mus = []
+for i in range(10):
+    mus += [qx_mu.sample()]
+
+mus = tf.stack(mus)
+
+# Inference: More controlled way of inference running
+inference.initialize(n_print=10, n_iter=600)
+init = tf.global_variables_initializer()
+init.run()
+
+# Prior samples
+outputs = mus.eval()
+priordf=pd.DataFrame(outputs)
+priordf['Sample']=["Sample"+str(x) for x in list(range(10))]
+priordf=pd.melt(priordf, id_vars="Sample")
+ggplot(priordf, aes(y="value", x="variable", color="Sample")) + geom_line()
+priordf['Type']='Prior'
+
+# Run Inference
+for _ in range(inference.n_iter):
+  info_dict = inference.update()
+  inference.print_progress(info_dict)
+
+inference.finalize()
+
+# Posterior samples
+outputs = mus.eval()
+postdf=pd.DataFrame(outputs)
+postdf['Sample']=["Sample"+str(x) for x in list(range(10))]
+postdf=pd.melt(postdf, id_vars="Sample")
+ggplot(postdf, aes(y="value", x="variable", color="Sample")) + geom_line()
+postdf['Type']='Posterior'
+
+# One glorious data frame for export
+tmpdf = pd.concat([priordf, postdf])
+tmpdf.to_csv("errorcorrsamplesdf.csv")
+```
+
+Did you get through the code? Good, then let's have a look at our dear posteriors and priors and data! We will start off by looking at 10 samples from the priors and posteriors. The x-axis in the plot below represents the years 1993 to 2015 where 0 is 1993 and 2015 is 22.
+
+```{r errorcorrmodel, echo=FALSE, message=FALSE, warning=FALSE, cache=FALSE}
+library(dplyr) 
+library(ggplot2)
+library(lubridate)
+library(scales)
+sampdf <- read.csv("errorcorrsamplesdf.csv")[-1]
+ggplot(sampdf, aes(y=value, x=variable, group=Sample, color=Type)) + geom_line() +
+  theme_minimal() + theme(legend.position = "top") +
+  scale_y_continuous(labels=comma) + 
+  facet_grid(Type~.) + ylab("Temperature deviance") + xlab("Offset in years from 1993")
+```
+
+We may want to look into what the average effect of the error correction model is and compare it to the data we observed. As you can see here we extracted a new mean for every observed point. So it's not surprising that it's consistent with the data. However, do you have any observations regarding the uncertainty of the likelihood? I'm sure you do, so play around with it and check what happens. Remember that the sigma for the latent variable quantifies the uncertainty of the location of the mean but doesn't state anything about what the likelihood will support. 
+
+```{r errorcorrmodelpostvsdata, echo=FALSE, message=FALSE, warning=FALSE, cache=FALSE}
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(scales)
+ggplot(sampdf %>% dplyr::filter(Type=="Posterior"), 
+       aes(y=value, x=variable, group=Sample)) + geom_line() + 
+  geom_point(data=mutate(mydf, Sample="data", variable=0:22), 
+             aes(y=Tempdev, x=variable, color="red", size=3)) + 
+  geom_line(data=dplyr::filter(sampdf, Type=="Posterior") %>% group_by(variable) %>% summarise(Mean=mean(value)) %>% mutate(Sample="data"), aes(y=Mean, x=variable, color="red")) +
+  theme_minimal() + ylab("Temperature deviance") + 
+  theme(legend.position = "none") + xlab("Offset in years from 1993")
+```
+
+Every data point in the graph above is marked with a red dot. The black lines are sampled from the posterior. These lines should be viewed as alternative realizations of the real unknown (latent) deviance in temperature. This construct allows us to not put undue confidence in the data we measured. In fact many data sources that are considered absolute are in fact inherently noisy. 

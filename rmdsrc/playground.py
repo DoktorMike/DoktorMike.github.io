@@ -11,12 +11,15 @@ mydf = pd.read_csv("../humanglobwarm.csv")
 N = mydf.shape[0]
 D = mydf.shape[1]
 
+# Define the model
 #z = tf.placeholder(tf.float32)
 x_mu = Normal(mu=tf.zeros(N), sigma=1*tf.ones([]))
-x = Normal(mu=x_mu, sigma=0.1*tf.ones([]))
+x = Normal(mu=x_mu, sigma=0.001*tf.ones([]))
 
+# VI placeholder
 qx_mu = Normal(mu=tf.Variable(tf.zeros(N)), sigma=tf.nn.softplus(tf.Variable(tf.ones(N))))
 
+# Set up data and the inference method to Kullback Leibler
 x_train = mydf.get("Tempdev").reshape([N,1])
 sess = ed.get_session()
 data = {x: x_train[:,0]}
@@ -40,10 +43,10 @@ init.run()
 # Prior samples
 outputs = mus.eval()
 priordf=pd.DataFrame(outputs)
-#mydf.to_csv("mydfprior.csv")
-#priordf['Sample']=list(range(10))
 priordf['Sample']=["Sample"+str(x) for x in list(range(10))]
-ggplot(pd.melt(priordf, id_vars="Sample"), aes(y="value", x="variable", color="Sample")) + geom_line()
+priordf=pd.melt(priordf, id_vars="Sample")
+ggplot(priordf, aes(y="value", x="variable", color="Sample")) + geom_line()
+priordf['Type']='Prior'
 
 # Run Inference
 for _ in range(inference.n_iter):
@@ -55,7 +58,11 @@ inference.finalize()
 # Posterior samples
 outputs = mus.eval()
 postdf=pd.DataFrame(outputs)
-#mydf.to_csv("mydfpost.csv")
-#postdf['Sample']=list(range(10))
 postdf['Sample']=["Sample"+str(x) for x in list(range(10))]
-ggplot(pd.melt(postdf, id_vars="Sample"), aes(y="value", x="variable", color="Sample")) + geom_line()
+postdf=pd.melt(postdf, id_vars="Sample")
+ggplot(postdf, aes(y="value", x="variable", color="Sample")) + geom_line()
+postdf['Type']='Posterior'
+
+# One glorious data frame for export
+tmpdf = pd.concat([priordf, postdf])
+tmpdf.to_csv("errorcorrsamplesdf.csv")
