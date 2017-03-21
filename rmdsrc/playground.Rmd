@@ -199,13 +199,13 @@ As you might have noticed these data seem a bit like they are suffering from mea
 
 $$ \begin{align}
 X_t & \sim \mathcal N(\mu_{X,t}, \sigma_X)\\
-\mu_{X,t} &\sim \mathcal N(0, 1)\\
+\mu_{X,t} &\sim \mathcal N(0, 0.5)\\
 \sigma_X &= 0.1 
 \end{align} $$
 
 where you can see that we fixed the noise so that we inform the model of the scale of the errors that we believe we will observe. If this is set too high then naturally nothing will emerge since the error is much larger than the signal. Be aware of these things in general when you express your likelihood functions!
 
-Check out the math above and make sure you understand the code below to see how Edward materializes this model. It's slightly different from Stan but you should be able to recognise most of the model setup. Do not worry too much about all the book keeping for extraxting and merging the priors and posteriors. Especially the last part where I export the distributions. I do this because the plots I will show you soon will be done in R. Not because they cannot be done in Python, but because doing them in python makes me want to kill myself.
+Check out the math above and make sure you understand the code below to see how Edward materializes this model. It's slightly different from Stan but you should be able to recognise most of the model setup. Do not worry too much about all the book keeping for extracting and merging the priors and posteriors. Especially the last part where I export the distributions. I do this because the plots I will show you soon will be done in R. Not because they cannot be done in Python, but because doing them in python makes me want to kill myself.
 
 ```{r engine='python', engine.path='python3', cache=FALSE, eval=TRUE, warning=FALSE, error=FALSE, include=TRUE, results='hide'}
 import tensorflow as tf

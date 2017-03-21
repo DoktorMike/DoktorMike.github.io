@@ -12,23 +12,27 @@ N = mydf.shape[0]
 D = mydf.shape[1]
 
 # Define the model
-#z = tf.placeholder(tf.float32)
-x_mu = Normal(mu=tf.zeros(N), sigma=1*tf.ones([]))
-x = Normal(mu=x_mu, sigma=0.001*tf.ones([]))
+z_mu = Normal(mu=tf.zeros(N), sigma=5e6*tf.ones([]))
+z = Normal(mu=z_mu, sigma=1e6*tf.ones([]))
+
+x_mu = Normal(mu=tf.zeros(N), sigma=0.5*tf.ones([]))
+x = Normal(mu=x_mu, sigma=0.1*tf.ones([]))
 
 # VI placeholder
-qx_mu = Normal(mu=tf.Variable(tf.zeros(N)), sigma=tf.nn.softplus(tf.Variable(tf.ones(N))))
+qz_mu = Normal(mu=tf.Variable(tf.zeros(N)), sigma=tf.nn.softplus(tf.Variable(1e6*tf.ones(N))))
+qx_mu = Normal(mu=tf.Variable(tf.zeros(N)), sigma=tf.nn.softplus(tf.Variable(0.5*tf.ones(N))))
 
 # Set up data and the inference method to Kullback Leibler
+z_train = mydf.get("Passengers").reshape([N,1])+0.1
 x_train = mydf.get("Tempdev").reshape([N,1])
 sess = ed.get_session()
-data = {x: x_train[:,0]}
-inference = ed.KLqp({x_mu: qx_mu}, data)
+data = {x: x_train[:,0], z: z_train[:,0]}
+inference = ed.KLqp({x_mu: qx_mu, z_mu: qz_mu}, data)
 
 # Set up for samples from models
 mus = []
 for i in range(10):
-    mus += [qx_mu.sample()]
+    mus += [qz_mu.sample()]
 
 mus = tf.stack(mus)
 
