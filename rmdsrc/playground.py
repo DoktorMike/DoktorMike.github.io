@@ -11,15 +11,16 @@ mydf = pd.read_csv("../humanglobwarm.csv")
 N = mydf.shape[0]
 D = mydf.shape[1]
 
+initpasmu = tf.zeros(N)+mydf["Passengers"].values.reshape(N)
 # Define the model
-z_mu = Normal(mu=tf.zeros(N)+3e6, sigma=5e5*tf.ones([]))
+z_mu = Normal(mu=initpasmu, sigma=1e6*tf.ones([]))
 z = Normal(mu=z_mu, sigma=1e6*tf.ones([]))
 
 x_mu = Normal(mu=tf.zeros(N), sigma=0.5*tf.ones([]))
 x = Normal(mu=x_mu, sigma=0.1*tf.ones([]))
 
 # VI placeholder
-qz_mu = Normal(mu=tf.Variable(tf.zeros(N)+3e6), sigma=tf.nn.softplus(tf.Variable(5e5*tf.ones(N))))
+qz_mu = Normal(mu=tf.Variable(initpasmu), sigma=tf.nn.softplus(tf.Variable(1e6*tf.ones(N))))
 qx_mu = Normal(mu=tf.Variable(tf.zeros(N)), sigma=tf.nn.softplus(tf.Variable(0.5*tf.ones(N))))
 
 # Set up data and the inference method to Kullback Leibler
