@@ -5,7 +5,7 @@ date: "Apr 1, 2017"
 output: html_document
 layout: post
 published: false
-status: process
+status: publish
 use_math: true
 ---
 
@@ -33,7 +33,7 @@ To start things off and make sure we have all our ducks in a row for running edw
 sudo pip3 install edward
 ```
 
-If you ran this in the console you should now have a working version of Edward installed in your python environment. So far so good. Just to make sure it works we will run a small Bayesian Neural Network with Gaussian priors for the weights. This is the standard example from Edwards web page. It uses a Variational Inference approach to turn the sampling problem into an optimization problem by approximating the target posterior by a multivariate Gaussian. This approach works ok for quite a few problems. However, it is a tad hyped as a general purpose inference sampler and should not be considered as a replacement for a real sampler. In either case try to run the code below and check it out. For this toy dataset it works fine. ;) 
+If you ran this in the console you should now have a working version of Edward installed in your python environment. So far so good. Just to make sure it works we will run a small Bayesian Neural Network with Gaussian priors for the weights. This is the standard example from Edwards web page. It uses a Variational Inference approach to turn the sampling problem into an optimization problem by approximating the target posterior by a multivariate Gaussian. This approach works ok for quite a few problems. However, it is a tad hyped as a general purpose inference sampler and should not be considered as a replacement for a real sampler. In either case try to run the code below and check it out. For this toy dataset it works fine. ;)
 
 ```{r engine='python', engine.path='python3', cache=FALSE, eval=FALSE}
 from __future__ import absolute_import
@@ -125,7 +125,7 @@ mydf.to_csv("mydfpost.csv")
 
 ## Checking the priors
 
-If you ran the code you will now have two files called mydfprior.csv and mydfpost.csv which contains, surprise, surprise, your prior and posterior curves based on the samples. As always we plot out the consequence of our priors and check what happens. In the plot below you can see that our priors for the Bayesian Neural Network do not really produce curves that resembles what we're looking for. Not to worry my friends; we don't actually need them to. Look through the graph and make sure you understand why the plot looks the way it does. 
+If you ran the code you will now have two files called mydfprior.csv and mydfpost.csv which contains, surprise, surprise, your prior and posterior curves based on the samples. As always we plot out the consequence of our priors and check what happens. In the plot below you can see that our priors for the Bayesian Neural Network do not really produce curves that resembles what we're looking for. Not to worry my friends; we don't actually need them to. Look through the graph and make sure you understand why the plot looks the way it does.
 
 ```{r Prior plot, echo=FALSE, message=FALSE, warning=FALSE}
 library(ggplot2)
@@ -144,7 +144,7 @@ priordf %>% mutate(s=1:10) %>% gather(x, y, -s) %>% mutate(x=as.numeric(gsub("X"
 > The problem with the world is not that people know too little. It's that they know so many things that just ain't so.
 -- Mark Twain
 
-So the priors hopefully makes sense to you now. How about our posterior? Well as you can see below this plot makes a lot more sense compared to the data we're trying to make sense of. However, you can clearly see some uncertainty in there as well. This is key, since no matter which model we choose there will always be elements of uncertainty involved. The great thing about science is that we don't have to pretend to know everything. We're perfectly comfortable admitting our ignorence. The probabilistic framework allows us to quantify that ignorance! If you think that sounds like a bad idea I suggest you take a look at the quote above. 
+So the priors hopefully makes sense to you now. How about our posterior? Well as you can see below this plot makes a lot more sense compared to the data we're trying to make sense of. However, you can clearly see some uncertainty in there as well. This is key, since no matter which model we choose there will always be elements of uncertainty involved. The great thing about science is that we don't have to pretend to know everything. We're perfectly comfortable admitting our ignorence. The probabilistic framework allows us to quantify that ignorance! If you think that sounds like a bad idea I suggest you take a look at the quote above.
 
 ```{r Post plot, echo=FALSE, message=FALSE, warning=FALSE}
 library(ggplot2)
@@ -160,7 +160,7 @@ postdf %>% mutate(s=1:10) %>% gather(x, y, -s) %>% mutate(x=as.numeric(gsub("X",
 
 # A more real world problem
 
-## A first look at the data 
+## A first look at the data
 
 There are few real world problems as pressing as that of global warming. Whenever I'm talking about global warming I feel there are two responses I get which are basically binomially distributed in which the majority of people quickly gets it and the other part are oblivious to facts presented to them. In reality there can be little to no doubt that humans are causing the green house effect. The plot below shows the evolution of the temperature anomaly over time since the 1850's until present time.
 
@@ -172,7 +172,7 @@ tempdf$date <- lubridate::ymd(paste0(as.character(tempdf$date), "/01"))
 ggplot(tempdf, aes(y=tempdev, x=date)) + geom_point() + geom_smooth() + ylab("Temperature deviance") + xlab("Date") + theme_minimal()
 ```
 
-As you see there is a clear trend showing that the world is getting warmer. So global warming is indeed happening and it's causing some very measurable real problems for us. There are lobbyist organizations around the world who wishes to tell you that this is not really caused by our increased CO2 emissions since they have well ulterior motives. If we plot the number of passenger per year in the same plot as the deviance of temperature it's also quite apparent that something here might be at least weakly related. However, in order to really prove that we need more work than I'm going to do in this post. This post is about Edward and Error correction models and not Global warming. 
+As you see there is a clear trend showing that the world is getting warmer. So global warming is indeed happening and it's causing some very measurable real problems for us. There are lobbyist organizations around the world who wishes to tell you that this is not really caused by our increased CO2 emissions since they have well ulterior motives. If we plot the number of passenger per year in the same plot as the deviance of temperature it's also quite apparent that something here might be at least weakly related. However, in order to really prove that we need more work than I'm going to do in this post. This post is about Edward and Error correction models and not Global warming.
 
 ```{r globflightsdata, echo=FALSE, message=FALSE, warning=FALSE}
 flightdf<-read.csv("tran_r_avpa_nm_1_Data.csv")
@@ -188,8 +188,8 @@ library(lubridate)
 adf<-tempdf %>% dplyr::filter(date >= "1993-01-01", date < "2016-01-01") %>% group_by(Year=year(date)) %>% summarise(Tempdev=mean(tempdev))
 bdf<-flightdf %>% group_by(Year=TIME) %>% summarise(Passengers=sum(Value, na.rm = T))
 mydf<-inner_join(adf, bdf)
-mydf %>% gather(Metric, Value, -Year) %>% ggplot(aes(y=Value, x=Year, color=Metric)) + 
-  facet_grid(Metric~., scales="free_y") + geom_point() + theme_minimal() + geom_smooth(method = lm) + 
+mydf %>% gather(Metric, Value, -Year) %>% ggplot(aes(y=Value, x=Year, color=Metric)) +
+  facet_grid(Metric~., scales="free_y") + geom_point() + theme_minimal() + geom_smooth(method = lm) +
   theme(legend.position = "top") + scale_y_continuous(labels=comma, lim=c(0,NA))
 ```
 
@@ -200,7 +200,7 @@ As you might have noticed these data seem a bit like they are suffering from mea
 $$ \begin{align}
 X_t & \sim \mathcal N(\mu_{X,t}, \sigma_X)\\
 \mu_{X,t} &\sim \mathcal N(0, 0.5)\\
-\sigma_X &= 0.1 
+\sigma_X &= 0.1
 \end{align} $$
 
 where you can see that we fixed the noise so that we inform the model of the scale of the errors that we believe we will observe. If this is set too high then naturally nothing will emerge since the error is much larger than the signal. Be aware of these things in general when you express your likelihood functions!
@@ -277,34 +277,34 @@ tmpdf.to_csv("errorcorrsamplesdf.csv")
 Did you get through the code? Good, then let's have a look at our dear posteriors and priors and data! We will start off by looking at 10 samples from the priors and posteriors. The x-axis in the plot below represents the years 1993 to 2015 where 0 is 1993 and 2015 is 22.
 
 ```{r errorcorrmodel, echo=FALSE, message=FALSE, warning=FALSE, cache=FALSE}
-library(dplyr) 
+library(dplyr)
 library(ggplot2)
 library(lubridate)
 library(scales)
 sampdf <- read.csv("errorcorrsamplesdf.csv")[-1]
 ggplot(sampdf, aes(y=value, x=variable, group=Sample, color=Type)) + geom_line() +
   theme_minimal() + theme(legend.position = "top") +
-  scale_y_continuous(labels=comma) + 
+  scale_y_continuous(labels=comma) +
   facet_grid(Type~.) + ylab("Temperature deviance") + xlab("Offset in years from 1993")
 ```
 
-We may want to look into what the average effect of the error correction model is and compare it to the data we observed. As you can see here we extracted a new mean for every observed point. So it's not surprising that it's consistent with the data. However, do you have any observations regarding the uncertainty of the likelihood? I'm sure you do, so play around with it and check what happens. Remember that the sigma for the latent variable quantifies the uncertainty of the location of the mean but doesn't state anything about what the likelihood will support. 
+We may want to look into what the average effect of the error correction model is and compare it to the data we observed. As you can see here we extracted a new mean for every observed point. So it's not surprising that it's consistent with the data. However, do you have any observations regarding the uncertainty of the likelihood? I'm sure you do, so play around with it and check what happens. Remember that the sigma for the latent variable quantifies the uncertainty of the location of the mean but doesn't state anything about what the likelihood will support.
 
 ```{r errorcorrmodelpostvsdata, echo=FALSE, message=FALSE, warning=FALSE, cache=FALSE}
 library(dplyr)
 library(ggplot2)
 library(lubridate)
 library(scales)
-ggplot(sampdf %>% dplyr::filter(Type=="Posterior"), 
-       aes(y=value, x=variable, group=Sample)) + geom_line() + 
-  geom_point(data=mutate(mydf, Sample="data", variable=0:22), 
-             aes(y=Tempdev, x=variable, color="red", size=3)) + 
+ggplot(sampdf %>% dplyr::filter(Type=="Posterior"),
+       aes(y=value, x=variable, group=Sample)) + geom_line() +
+  geom_point(data=mutate(mydf, Sample="data", variable=0:22),
+             aes(y=Tempdev, x=variable, color="red", size=3)) +
   geom_line(data=dplyr::filter(sampdf, Type=="Posterior") %>% group_by(variable) %>% summarise(Mean=mean(value)) %>% mutate(Sample="data"), aes(y=Mean, x=variable, color="red")) +
-  theme_minimal() + ylab("Temperature deviance") + 
+  theme_minimal() + ylab("Temperature deviance") +
   theme(legend.position = "none") + xlab("Offset in years from 1993")
 ```
 
-Every data point in the graph above is marked with a red dot. The black lines are sampled from the posterior. These lines should be viewed as alternative realizations of the real unknown (latent) deviance in temperature. This construct allows us to not put undue confidence in the data we measured. In fact many data sources that are considered absolute are in fact inherently noisy. 
+Every data point in the graph above is marked with a red dot. The black lines are sampled from the posterior. These lines should be viewed as alternative realizations of the real unknown (latent) deviance in temperature. This construct allows us to not put undue confidence in the data we measured. In fact many data sources that are considered absolute are in fact inherently noisy.
 
 ## Putting it in a regression formulation
 
@@ -318,7 +318,7 @@ X_t & \sim \mathcal N(\mu_{X,t}, \sigma_X)\\
 \sigma_X &= 0.1
 \end{align} $$
 
-where $X_t$ and $Z_t$ is the deviance in temperature and number of passengers transported by airplane at year $t$ respectively. The other variables quantify dynamics and uncertainty. The priors are specified quite widely to capture a broad spectrum of possibly consistent models. This model can also be sampled using Edward but I'll leave that as an exercise for you to solve. 
+where $X_t$ and $Z_t$ is the deviance in temperature and number of passengers transported by airplane at year $t$ respectively. The other variables quantify dynamics and uncertainty. The priors are specified quite widely to capture a broad spectrum of possibly consistent models. This model can also be sampled using Edward but I'll leave that as an exercise for you to solve.
 
 # Conclusions from my simulations
 
