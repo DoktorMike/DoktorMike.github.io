@@ -25,90 +25,90 @@ sudo pip3 install edward
 If you ran this in the console you should now have a working version of Edward installed in your python environment. So far so good. Just to make sure it works we will run a small Bayesian Neural Network with Gaussian priors for the weights. This is the standard example from Edwards web page. It uses a Variational Inference approach to turn the sampling problem into an optimization problem by approximating the target posterior by a multivariate Gaussian. This approach works ok for quite a few problems. However, it is a tad hyped as a general purpose inference sampler and should not be considered as a replacement for a real sampler. In either case try to run the code below and check it out. For this toy dataset it works fine. ;)
 
 ```python
-    from __future__ import absolute_import
-    from __future__ import division
-    from __future__ import print_function
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
-    import edward as ed
-    import numpy as np
-    import tensorflow as tf
+import edward as ed
+import numpy as np
+import tensorflow as tf
 
-    from edward.models import Normal
+from edward.models import Normal
 
-    def build_toy_dataset(N=50, noise_std=0.1):
-      x = np.linspace(-3, 3, num=N)
-      y = np.cos(x) + np.random.normal(0, noise_std, size=N)
-      x = x.astype(np.float32).reshape((N, 1))
-      y = y.astype(np.float32)
-      return x, y
+def build_toy_dataset(N=50, noise_std=0.1):
+  x = np.linspace(-3, 3, num=N)
+  y = np.cos(x) + np.random.normal(0, noise_std, size=N)
+  x = x.astype(np.float32).reshape((N, 1))
+  y = y.astype(np.float32)
+  return x, y
 
-    def neural_network(x, W_0, W_1, b_0, b_1):
-      h = tf.tanh(tf.matmul(x, W_0) + b_0)
-      h = tf.matmul(h, W_1) + b_1
-      return tf.reshape(h, [-1])
-
-
-    ed.set_seed(42)
-
-    N = 50  # number of data ponts
-    D = 1   # number of features
-
-    # DATA
-    x_train, y_train = build_toy_dataset(N)
-
-    # MODEL
-    W_0 = Normal(mu=tf.zeros([D, 2]), sigma=tf.ones([D, 2]))
-    W_1 = Normal(mu=tf.zeros([2, 1]), sigma=tf.ones([2, 1]))
-    b_0 = Normal(mu=tf.zeros(2), sigma=tf.ones(2))
-    b_1 = Normal(mu=tf.zeros(1), sigma=tf.ones(1))
-
-    x = x_train
-    y = Normal(mu=neural_network(x, W_0, W_1, b_0, b_1),
-               sigma=0.1 * tf.ones(N))
-
-    # INFERENCE
-    qW_0 = Normal(mu=tf.Variable(tf.random_normal([D, 2])),
-                  sigma=tf.nn.softplus(tf.Variable(tf.random_normal([D, 2]))))
-    qW_1 = Normal(mu=tf.Variable(tf.random_normal([2, 1])),
-                  sigma=tf.nn.softplus(tf.Variable(tf.random_normal([2, 1]))))
-    qb_0 = Normal(mu=tf.Variable(tf.random_normal([2])),
-                  sigma=tf.nn.softplus(tf.Variable(tf.random_normal([2]))))
-    qb_1 = Normal(mu=tf.Variable(tf.random_normal([1])),
-                  sigma=tf.nn.softplus(tf.Variable(tf.random_normal([1]))))
-
-    inference = ed.KLqp({W_0: qW_0, b_0: qb_0,
-                         W_1: qW_1, b_1: qb_1}, data={y: y_train})
+def neural_network(x, W_0, W_1, b_0, b_1):
+  h = tf.tanh(tf.matmul(x, W_0) + b_0)
+  h = tf.matmul(h, W_1) + b_1
+  return tf.reshape(h, [-1])
 
 
-    # Sample functions from variational model to visualize fits.
-    rs = np.random.RandomState(0)
-    inputs = np.linspace(-5, 5, num=400, dtype=np.float32)
-    x = tf.expand_dims(tf.constant(inputs), 1)
-    mus = []
-    for s in range(10):
-      mus += [neural_network(x, qW_0.sample(), qW_1.sample(),
-                             qb_0.sample(), qb_1.sample())]
+ed.set_seed(42)
 
-    mus = tf.stack(mus)
+N = 50  # number of data ponts
+D = 1   # number of features
 
-    sess = ed.get_session()
-    init = tf.global_variables_initializer()
-    init.run()
+# DATA
+x_train, y_train = build_toy_dataset(N)
 
-    import pandas as pd
+# MODEL
+W_0 = Normal(mu=tf.zeros([D, 2]), sigma=tf.ones([D, 2]))
+W_1 = Normal(mu=tf.zeros([2, 1]), sigma=tf.ones([2, 1]))
+b_0 = Normal(mu=tf.zeros(2), sigma=tf.ones(2))
+b_1 = Normal(mu=tf.zeros(1), sigma=tf.ones(1))
 
-    # Prior samples
-    outputs = mus.eval()
-    mydf=pd.DataFrame(outputs)
-    mydf.to_csv("mydfprior.csv")
+x = x_train
+y = Normal(mu=neural_network(x, W_0, W_1, b_0, b_1),
+           sigma=0.1 * tf.ones(N))
 
-    # Inference
-    inference.run(n_iter=500, n_samples=5)
+# INFERENCE
+qW_0 = Normal(mu=tf.Variable(tf.random_normal([D, 2])),
+              sigma=tf.nn.softplus(tf.Variable(tf.random_normal([D, 2]))))
+qW_1 = Normal(mu=tf.Variable(tf.random_normal([2, 1])),
+              sigma=tf.nn.softplus(tf.Variable(tf.random_normal([2, 1]))))
+qb_0 = Normal(mu=tf.Variable(tf.random_normal([2])),
+              sigma=tf.nn.softplus(tf.Variable(tf.random_normal([2]))))
+qb_1 = Normal(mu=tf.Variable(tf.random_normal([1])),
+              sigma=tf.nn.softplus(tf.Variable(tf.random_normal([1]))))
 
-    # Posterior samples
-    outputs = mus.eval()
-    mydf=pd.DataFrame(outputs)
-    mydf.to_csv("mydfpost.csv")
+inference = ed.KLqp({W_0: qW_0, b_0: qb_0,
+                     W_1: qW_1, b_1: qb_1}, data={y: y_train})
+
+
+# Sample functions from variational model to visualize fits.
+rs = np.random.RandomState(0)
+inputs = np.linspace(-5, 5, num=400, dtype=np.float32)
+x = tf.expand_dims(tf.constant(inputs), 1)
+mus = []
+for s in range(10):
+  mus += [neural_network(x, qW_0.sample(), qW_1.sample(),
+                         qb_0.sample(), qb_1.sample())]
+
+mus = tf.stack(mus)
+
+sess = ed.get_session()
+init = tf.global_variables_initializer()
+init.run()
+
+import pandas as pd
+
+# Prior samples
+outputs = mus.eval()
+mydf=pd.DataFrame(outputs)
+mydf.to_csv("mydfprior.csv")
+
+# Inference
+inference.run(n_iter=500, n_samples=5)
+
+# Posterior samples
+outputs = mus.eval()
+mydf=pd.DataFrame(outputs)
+mydf.to_csv("mydfpost.csv")
 ```
 
 ## Checking the priors
@@ -153,74 +153,74 @@ X_t & \sim \mathcal N(\mu_{X,t}, \sigma_X)\\
 
 where you can see that we fixed the noise so that we inform the model of the scale of the errors that we believe we will observe. If this is set too high then naturally nothing will emerge since the error is much larger than the signal. Be aware of these things in general when you express your likelihood functions!
 
-Check out the math above and make sure you understand the code below to see how Edward materializes this model. It's slightly different from Stan but you should be able to recognise most of the model setup. Do not worry too much about all the book keeping for extracting and merging the priors and posteriors. Especially the last part where I export the distributions. I do this because the plots I will show you soon will be done in R. Not because they cannot be done in Python, but because doing them in python makes me want to kill myself.
+Check out the math above and make sure you understand the code below to see how Edward materializes this model. It's slightly different from Stan but you should be able to recognize most of the model setup. Do not worry too much about all the book keeping for extracting and merging the priors and posteriors. Especially the last part where I export the distributions. I do this because the plots I will show you soon will be done in R. Not because they cannot be done in Python, but because doing them in python makes me want to kill myself.
 
 
 ```python
-    import tensorflow as tf
-    import edward as ed
-    import pandas as pd
-    import numpy as np
-    from ggplot import *
-    from edward.models import Normal, Bernoulli
-    import matplotlib.pyplot as plt
+import tensorflow as tf
+import edward as ed
+import pandas as pd
+import numpy as np
+from ggplot import *
+from edward.models import Normal, Bernoulli
+import matplotlib.pyplot as plt
 
-    mydf = pd.read_csv("../humanglobwarm.csv")
+mydf = pd.read_csv("../humanglobwarm.csv")
 
-    N = mydf.shape[0]
-    D = mydf.shape[1]
+N = mydf.shape[0]
+D = mydf.shape[1]
 
-    # Define the model
-    x_mu = Normal(mu=tf.zeros(N), sigma=0.5*tf.ones([]))
-    x = Normal(mu=x_mu, sigma=0.1*tf.ones([]))
+# Define the model
+x_mu = Normal(mu=tf.zeros(N), sigma=0.5*tf.ones([]))
+x = Normal(mu=x_mu, sigma=0.1*tf.ones([]))
 
-    # VI placeholder
-    qx_mu = Normal(mu=tf.Variable(tf.zeros(N)), sigma=tf.nn.softplus(tf.Variable(0.5*tf.ones(N))))
+# VI placeholder
+qx_mu = Normal(mu=tf.Variable(tf.zeros(N)), sigma=tf.nn.softplus(tf.Variable(0.5*tf.ones(N))))
 
-    # Set up data and the inference method to Kullback Leibler
-    x_train = mydf.get("Tempdev").reshape([N,1])
-    sess = ed.get_session()
-    data = {x: x_train[:,0]}
-    inference = ed.KLqp({x_mu: qx_mu}, data)
+# Set up data and the inference method to Kullback Leibler
+x_train = mydf.get("Tempdev").reshape([N,1])
+sess = ed.get_session()
+data = {x: x_train[:,0]}
+inference = ed.KLqp({x_mu: qx_mu}, data)
 
-    # Set up for samples from models
-    mus = []
-    for i in range(10):
-        mus += [qx_mu.sample()]
+# Set up for samples from models
+mus = []
+for i in range(10):
+    mus += [qx_mu.sample()]
 
-    mus = tf.stack(mus)
+mus = tf.stack(mus)
 
-    # Inference: More controlled way of inference running
-    inference.initialize(n_print=10, n_iter=600)
-    init = tf.global_variables_initializer()
-    init.run()
+# Inference: More controlled way of inference running
+inference.initialize(n_print=10, n_iter=600)
+init = tf.global_variables_initializer()
+init.run()
 
-    # Prior samples
-    outputs = mus.eval()
-    priordf=pd.DataFrame(outputs)
-    priordf['Sample']=["Sample"+str(x) for x in list(range(10))]
-    priordf=pd.melt(priordf, id_vars="Sample")
-    ggplot(priordf, aes(y="value", x="variable", color="Sample")) + geom_line()
-    priordf['Type']='Prior'
+# Prior samples
+outputs = mus.eval()
+priordf=pd.DataFrame(outputs)
+priordf['Sample']=["Sample"+str(x) for x in list(range(10))]
+priordf=pd.melt(priordf, id_vars="Sample")
+ggplot(priordf, aes(y="value", x="variable", color="Sample")) + geom_line()
+priordf['Type']='Prior'
 
-    # Run Inference
-    for _ in range(inference.n_iter):
-      info_dict = inference.update()
-      inference.print_progress(info_dict)
+# Run Inference
+for _ in range(inference.n_iter):
+  info_dict = inference.update()
+  inference.print_progress(info_dict)
 
-    inference.finalize()
+inference.finalize()
 
-    # Posterior samples
-    outputs = mus.eval()
-    postdf=pd.DataFrame(outputs)
-    postdf['Sample']=["Sample"+str(x) for x in list(range(10))]
-    postdf=pd.melt(postdf, id_vars="Sample")
-    ggplot(postdf, aes(y="value", x="variable", color="Sample")) + geom_line()
-    postdf['Type']='Posterior'
+# Posterior samples
+outputs = mus.eval()
+postdf=pd.DataFrame(outputs)
+postdf['Sample']=["Sample"+str(x) for x in list(range(10))]
+postdf=pd.melt(postdf, id_vars="Sample")
+ggplot(postdf, aes(y="value", x="variable", color="Sample")) + geom_line()
+postdf['Type']='Posterior'
 
-    # One glorious data frame for export
-    tmpdf = pd.concat([priordf, postdf])
-    tmpdf.to_csv("errorcorrsamplesdf.csv")
+# One glorious data frame for export
+tmpdf = pd.concat([priordf, postdf])
+tmpdf.to_csv("errorcorrsamplesdf.csv")
 ```
 
 
