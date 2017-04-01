@@ -18,8 +18,9 @@ There's a new kid on the inference block called "Edward" who is full of potentia
 
 To start things off and make sure we have all our ducks in a row for running edward we need to install it using the python installer called pip which is available in most linux distros. I will use pip3 here because I use python3 instead of python2. It shouldn't matter which one you choose though. So go ahead and install "Edward".
 
-
-    sudo pip3 install edward
+```bash
+sudo pip3 install edward
+```
 
 If you ran this in the console you should now have a working version of Edward installed in your python environment. So far so good. Just to make sure it works we will run a small Bayesian Neural Network with Gaussian priors for the weights. This is the standard example from Edwards web page. It uses a Variational Inference approach to turn the sampling problem into an optimization problem by approximating the target posterior by a multivariate Gaussian. This approach works ok for quite a few problems. However, it is a tad hyped as a general purpose inference sampler and should not be considered as a replacement for a real sampler. In either case try to run the code below and check it out. For this toy dataset it works fine. ;)
 
@@ -155,6 +156,7 @@ where you can see that we fixed the noise so that we inform the model of the sca
 Check out the math above and make sure you understand the code below to see how Edward materializes this model. It's slightly different from Stan but you should be able to recognise most of the model setup. Do not worry too much about all the book keeping for extracting and merging the priors and posteriors. Especially the last part where I export the distributions. I do this because the plots I will show you soon will be done in R. Not because they cannot be done in Python, but because doing them in python makes me want to kill myself.
 
 
+```python
     import tensorflow as tf
     import edward as ed
     import pandas as pd
@@ -219,6 +221,8 @@ Check out the math above and make sure you understand the code below to see how 
     # One glorious data frame for export
     tmpdf = pd.concat([priordf, postdf])
     tmpdf.to_csv("errorcorrsamplesdf.csv")
+```
+
 
 Did you get through the code? Good, then let's have a look at our dear posteriors and priors and data! We will start off by looking at 10 samples from the priors and posteriors. The x-axis in the plot below represents the years 1993 to 2015 where 0 is 1993 and 2015 is 22.
 
