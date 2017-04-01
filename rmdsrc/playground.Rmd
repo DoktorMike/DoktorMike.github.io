@@ -1,5 +1,5 @@
 ---
-title: "A first look at Edward!"
+title: "A few thoughts on bimodality for regression problems!"
 author: "Dr. Michael Green"
 date: "Apr 1, 2017"
 output: html_document
@@ -25,12 +25,23 @@ rstan_options(auto_write = TRUE)
 
 # Motivation
 
-There's a new kid on the inference block called "Edward" who is full of potential and promises of merging probabilistic programming, computational graphs and inference! There's also talk of a 35 times speed up compared to our good old reliable fellow "Stan". Today I will run some comparisons for problems that currently interest me namely time series with structural hyperparameters.
+Did you ever run into a scenario when your data is showing two distinctive relationships but you're trying to solve for it with one regression line? This happens to me a lot. So I thought about having some fun with it intead of dreading it and the nasty consequences that may arise from this behaviour. Below you'll see a plot featuring two variables, $x$, and $y$ where we are tasked with figuring out how the value of $y$ depends on $x$.
 
-To start things off and make sure we have all our ducks in a row for running edward we need to install it using the python installer called pip which is available in most linux distros. I will use pip3 here because I use python3 instead of python2. It shouldn't matter which one you choose though. So go ahead and install "Edward".
-
-```{bash installedward, eval=FALSE, include=TRUE}
-sudo pip3 install edward
+```{r problemplot}
+mydf<-tibble(x=seq(0,30,0.2), z=ifelse(runif(1:length(x))>0.5, 1, 2), y=x*ifelse(z<2, 1, 3)+rnorm(length(x), 0, 5))
+# mydf<-tibble(x=seq(0,30,0.2), y=x*ifelse(runif(1:length(x))>0.5, 1, 3)+rnorm(length(x), 0, 5))
+ggplot(mydf, aes(y=y, x=x)) + geom_point() + theme_minimal()
 ```
 
+Naturally, what comes to most peoples mind is that we need to model $y_t=\omega f(x_t)+\epsilon$ where $f$ and $\omega$ are currently unknown. The most straightforward solution to this is to assume that we are in a linear regime and consequently that $f(x)=I(x)=x$ where $I$ is the identity function. The equation then quickly becomes $y_t=\omega x_t+\epsilon$ at which time data scientists usually rejoice and apply linear regression. So let's do just that shall we.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+mylm<-lm(y~x, data=mydf)
+p1<-ggplot(mydf, aes(y=y, x=x)) + geom_point() + theme_minimal() + geom_smooth(method="lm")
+p2<-ggplot(mydf, aes(y=y, x=x, group=z, color=factor(z))) + geom_point() + theme_minimal() + 
+  geom_smooth(method="lm") + theme(legend.position = "none")
+multiplot(p1, p2, cols = 2)
+```
+
+Most of us would agree that the solution with the linear model to the left is not a very nice scenario. We're always off in terms of knowing the real $E[y|x]$. Conceptually this is not very difficult though. We humans do this all the time. If I show you another solution which looks like the one to the right then what would you say? Hopefully you would recognise this as something you would approve of. 
 
