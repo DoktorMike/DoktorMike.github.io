@@ -43,5 +43,74 @@ p2<-ggplot(mydf, aes(y=y, x=x, group=z, color=factor(z))) + geom_point() + theme
 multiplot(p1, p2, cols = 2)
 ```
 
-Most of us would agree that the solution with the linear model to the left is not a very nice scenario. We're always off in terms of knowing the real $E[y|x]$. Conceptually this is not very difficult though. We humans do this all the time. If I show you another solution which looks like the one to the right then what would you say? Hopefully you would recognise this as something you would approve of. 
+Most of us would agree that the solution with the linear model to the left is not a very nice scenario. We're always off in terms of knowing the real $E[y|x]$. Conceptually this is not very difficult though. We humans do this all the time. If I show you another solution which looks like the one to the right then what would you say? Hopefully you would recognise this as something you would approve of. The problem with this is that a linear model cannot capture this. You need a transformation function to accomplish this. 
 
+```{r linearregression, message=FALSE, warning=FALSE, include=FALSE, cache=TRUE}
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+modelstring<-"
+data {
+  int N;
+  real x[N];
+  real y[N];
+}
+parameters {
+  real alpha;
+  real beta;
+  real sigma;
+}
+model {
+  alpha ~ normal(0, 1);
+  beta ~ cauchy(0,10);
+  for(n in 1:N)
+    y[n] ~ normal(beta*x[n]+alpha, sigma);
+}
+generated quantities {
+  real y_pred[N];
+  for (n in 1:N)
+    y_pred[n] = x[n]*beta+alpha;
+}
+"
+sfit<-stan(model_code = modelstring, data = list(N=nrow(mydf), x=mydf$x, y=mydf$y))
+```
+
+But wait! We're all Bayesians here aren't we? So maybe we can caputure this behavior by just letting our model support two modes for the slope parameter? As such we would never really know which slope cluster that would be chosen at any given time and naturally the expectation would end up between the both lines where the posterior probability is zero. Let's have a look at what the following model does when exposed to this data.
+
+$$ \begin{align}
+y_t &\sim \mathcal N(\mu_t, \sigma)\\
+\mu_t &=\beta x_t + \alpha\\ 
+\beta &\sim \mathcal C(0, 10)\\
+\alpha &\sim \mathcal N(0, 1)\\
+\sigma &\sim \mathcal U(0.01, \inf) 
+\end{align} $$
+
+Below you can see the plotted simulated regression lines from the model. Not great is it? Not only did our assumption of bimodality fall through but we're indeed no better of than before. Why? Well, in this case the mathematical formulation of the problem was just plain wrong. Depending on multimodality to cover up for your model specification sins is just bad practice. 
+
+```{r prediction plot, echo=FALSE, message=FALSE, warning=FALSE}
+plotFit<-function(sfitdf, mydf, n=3){
+  mynames<-grep("y_pred", colnames(sfitdf), value = T)
+  tmpdf<-gather(data.frame(x=mydf$x, y=mydf$y, 
+                           t(sfitdf[sample(1:nrow(sfitdf), n), mynames])), 
+                "Measurement", "Value", -x)
+  ggplot(tmpdf, aes(y=Value, x=x, color=Measurement)) + geom_point()
+}
+sfitdf<-as.data.frame(sfit)
+#qplot(sfitdf$beta)
+preddf<-tibble(x=mydf$x, y=mydf$y, yhat=colMeans(sfitdf[, grep("y_pred", colnames(sfitdf), value=TRUE)]))
+# ggplot(gather(preddf, key, value, -x), aes(y=value, x=x, color=key)) + geom_point() + theme_minimal()
+plotFit(sfitdf, mydf, 10) + theme_minimal() + scale_color_discrete() + xlab("x") + 
+  ylab("y") + theme(legend.position = "none")
+```
+
+Ok, so if the previous model was badly specified then what should we do to fix it? In principle we want the following behavior $y_t=x_t(\beta+\omega z_t)+\alpha$ where $z_t$ is a binary state variable indicating whether the current $x_t$ has the first or the second response type. The full model we then might want to consider looks like this.
+
+$$ \begin{align}
+y_t &\sim \mathcal N(\mu_t, \sigma)\\
+\mu_t &=x_t(\beta+\omega z_t)+\alpha\\
+z_t &\sim \mathcal{Bin}(1, 0.5)\\
+\beta &\sim \mathcal C(0, 10)\\
+\alpha &\sim \mathcal N(0, 1)\\
+\sigma &\sim \mathcal U(0.01, \inf) 
+\end{align} $$
+
+This would allow the state to be modeled as a latent variable in time. This is very useful for a variety of problems where we know something to be true but lack observed data to quantify it.
