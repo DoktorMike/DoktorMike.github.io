@@ -1,7 +1,7 @@
 ---
-title: "A few thoughts on bimodality for regression problems!"
+title: "A few thoughts on apparent bimodality for regression problems!"
 author: "Dr. Michael Green"
-date: "Apr 1, 2017"
+date: "Apr 9, 2017"
 output: html_document
 layout: post
 published: false
@@ -107,10 +107,92 @@ Ok, so if the previous model was badly specified then what should we do to fix i
 $$ \begin{align}
 y_t &\sim \mathcal N(\mu_t, \sigma)\\
 \mu_t &=x_t(\beta+\omega z_t)+\alpha\\
+\omega &\sim \mathcal N(0, 1)\\
 z_t &\sim \mathcal{Bin}(1, 0.5)\\
 \beta &\sim \mathcal C(0, 10)\\
 \alpha &\sim \mathcal N(0, 1)\\
 \sigma &\sim \mathcal U(0.01, \inf) 
 \end{align} $$
 
-This would allow the state to be modeled as a latent variable in time. This is very useful for a variety of problems where we know something to be true but lack observed data to quantify it.
+This would allow the state to be modeled as a latent variable in time. This is very useful for a variety of problems where we know something to be true but lack observed data to quantify it. However, modeling discrete latent variables can be computationally demanding if all you are really looking for is an extra dimension. We can of course design this. So instead of viewing $z_t$ as a latent state variable we can actually precode the state by unsupervised hierarchical clustering. The code in R would look like this.
+
+```{r Adding clustered state, echo=TRUE, message=FALSE, warning=FALSE}
+mydf<-mutate(mydf, zz=cutree(hclust(dist(mydf[, c("y", "x")])), 2))
+```
+
+which encodes the clustered state in a variable called $zz$. Consequently it would produce a hierarchical cluster like the one below.
+
+```{r clusterplot, echo=FALSE, message=FALSE, warning=FALSE}
+plot(hclust(dist(mydf[, c("y", "x")])))
+```
+
+This leaves us in a position where we can treat $z_t$ as observed data even though we sort of clustered it. The revised math is given below. 
+
+$$ \begin{align}
+y_t &\sim \mathcal N(\mu_t, \sigma)\\
+\mu_t &=x_t(\beta+\omega z_t)+\alpha\\
+\omega &\sim \mathcal N(0, 1)\\
+\beta &\sim \mathcal C(0, 10)\\
+\alpha &\sim \mathcal N(0, 1)\\
+\sigma &\sim \mathcal U(0.01, \inf) 
+\end{align} $$
+
+
+```{r linearregression2, message=FALSE, warning=FALSE, include=FALSE, cache=TRUE}
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+modelstring2<-"
+data {
+  int N;
+  real x[N];
+  real y[N];
+  real z[N];
+}
+parameters {
+  real alpha;
+  real beta;
+  real omega;
+  real sigma;
+}
+model {
+  alpha ~ normal(0, 1);
+  beta ~ cauchy(0,10);
+  for(n in 1:N)
+    y[n] ~ normal(x[n]*(beta+omega*z[n])+alpha, sigma);
+}
+generated quantities {
+  real y_pred[N];
+  for (n in 1:N)
+    y_pred[n] = x[n]*(beta+omega*z[n])+alpha;
+}
+"
+sfit2<-stan(model_code = modelstring2, data = list(N=nrow(mydf), x=mydf$x, y=mydf$y, z=mydf$zz))
+sfitdf2<-as.data.frame(sfit2)
+```
+
+Comparing the results from our first model with the current one we can see that we're obviously doing better. The clustering works pretty well. The graph to the left is the first model and the one to the right is the revised model with an updated likelihood.
+
+```{r 1vs2, echo=FALSE, message=FALSE, warning=FALSE}
+multiplot(
+  plotFit(sfitdf, mydf, 150) + theme_minimal() + scale_color_discrete() + xlab("x") + 
+    ylab("y") + theme(legend.position = "none"),
+  plotFit(sfitdf2, mydf, 150) + theme_minimal() + scale_color_discrete() + xlab("x") + 
+    ylab("y") + theme(legend.position = "none"), cols = 2)
+```
+
+As is always instructional let's look at the posteriors of the parameters of our second model. They are depicted below. You can clearly see that the "increase in slope" parameter $\omega$ clearly captures the new behavior we wished to model.  
+
+```{r model results, echo=FALSE, message=FALSE, warning=FALSE}
+sfitdf2 %>% dplyr::select(-matches("y_pred")) %>% gather() %>% ggplot(aes(x=value)) + geom_histogram() + facet_wrap(~key, scales="free") + theme_minimal()
+```
+
+# Conclusion
+
+This post has been about not becoming blind with respect to the mathematical restrictions we impose on the total model by sticking to a too simplistic representation. Also in this case the Bayesian formalism does not save us with it's bimodal capabilities since the model was misspecified.
+
+- Think about all aspects of your model before you push the inference button
+- Be aware that something that might appear as a clear cut case for multimodality may actually be a pathological problem in your model
+- Also, be aware that sometimes multimodality *is* expected and totally ok
+
+Happy inferencing!
+
