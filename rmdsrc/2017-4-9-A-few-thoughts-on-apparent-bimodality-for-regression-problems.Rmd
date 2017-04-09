@@ -5,7 +5,7 @@ date: "Apr 9, 2017"
 output: html_document
 layout: post
 published: false
-status: process
+status: publish
 use_math: true
 ---
 
