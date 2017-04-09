@@ -18,9 +18,8 @@ Did you ever run into a scenario when your data is showing two distinctive relat
 
 
 ```r
-    mydf<-tibble(x=seq(0,30,0.2), z=ifelse(runif(1:length(x))>0.5, 1, 2), y=x*ifelse(z<2, 1, 3)+rnorm(length(x), 0, 5))
-    # mydf<-tibble(x=seq(0,30,0.2), y=x*ifelse(runif(1:length(x))>0.5, 1, 3)+rnorm(length(x), 0, 5))
-    ggplot(mydf, aes(y=y, x=x)) + geom_point() + theme_minimal()
+mydf<-tibble(x=seq(0,30,0.2), z=ifelse(runif(1:length(x))>0.5, 1, 2), y=x*ifelse(z<2, 1, 3)+rnorm(length(x), 0, 5))
+ggplot(mydf, aes(y=y, x=x)) + geom_point() + theme_minimal()
 ```
 
 
@@ -31,7 +30,7 @@ Naturally, what comes to most peoples mind is that we need to model $y_t=\omega 
 ![plot of chunk unnamed-chunk-1](/images/figure/unnamed-chunk-1-1.png)
 
 
-Most of us would agree that the solution with the linear model to the left is not a very nice scenario. We're always off in terms of knowing the real $E(y|x)$. Conceptually this is not very difficult though. We humans do this all the time. If I show you another solution which looks like the one to the right then what would you say? Hopefully you would recognise this as something you would approve of. The problem with this is that a linear model cannot capture this. You need a transformation function to accomplish this.
+Most of us would agree that the solution with the linear model to the left is not a very nice scenario. We're always off in terms of knowing the real expectation value. Conceptually this is not very difficult though. We humans do this all the time. If I show you another solution which looks like the one to the right then what would you say? Hopefully you would recognise this as something you would approve of. The problem with this is that a linear model cannot capture this. You need a transformation function to accomplish this.
 
 
 
@@ -64,7 +63,7 @@ z_t &\sim \mathcal{Bin}(1, 0.5)\\
 This would allow the state to be modeled as a latent variable in time. This is very useful for a variety of problems where we know something to be true but lack observed data to quantify it. However, modeling discrete latent variables can be computationally demanding if all you are really looking for is an extra dimension. We can of course design this. So instead of viewing $z_t$ as a latent state variable we can actually precode the state by unsupervised hierarchical clustering. The code in R would look like this.
 
 ```r
-    mydf<-mutate(mydf, zz=cutree(hclust(dist(mydf[, c("y", "x")])), 2))
+mydf<-mutate(mydf, zz=cutree(hclust(dist(mydf[, c("y", "x")])), 2))
 ```
 
 which encodes the clustered state in a variable called $zz$. Consequently it would produce a hierarchical cluster like the one below.
