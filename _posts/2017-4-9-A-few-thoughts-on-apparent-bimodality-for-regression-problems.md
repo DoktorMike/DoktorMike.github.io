@@ -16,11 +16,13 @@ use_math: true
 
 Did you ever run into a scenario when your data is showing two distinctive relationships but you're trying to solve for it with one regression line? This happens to me a lot. So I thought about having some fun with it intead of dreading it and the nasty consequences that may arise from this behaviour. Below you'll see a plot featuring two variables, $x$, and $y$ where we are tasked with figuring out how the value of $y$ depends on $x$.
 
+
 ```r
     mydf<-tibble(x=seq(0,30,0.2), z=ifelse(runif(1:length(x))>0.5, 1, 2), y=x*ifelse(z<2, 1, 3)+rnorm(length(x), 0, 5))
     # mydf<-tibble(x=seq(0,30,0.2), y=x*ifelse(runif(1:length(x))>0.5, 1, 3)+rnorm(length(x), 0, 5))
     ggplot(mydf, aes(y=y, x=x)) + geom_point() + theme_minimal()
 ```
+
 
 ![plot of chunk problemplot](/images/figure/problemplot-1.png)
 
@@ -28,7 +30,8 @@ Naturally, what comes to most peoples mind is that we need to model $y_t=\omega 
 
 ![plot of chunk unnamed-chunk-1](/images/figure/unnamed-chunk-1-1.png)
 
-Most of us would agree that the solution with the linear model to the left is not a very nice scenario. We're always off in terms of knowing the real $E[y|x]$. Conceptually this is not very difficult though. We humans do this all the time. If I show you another solution which looks like the one to the right then what would you say? Hopefully you would recognise this as something you would approve of. The problem with this is that a linear model cannot capture this. You need a transformation function to accomplish this.
+
+Most of us would agree that the solution with the linear model to the left is not a very nice scenario. We're always off in terms of knowing the real $E(y|x)$. Conceptually this is not very difficult though. We humans do this all the time. If I show you another solution which looks like the one to the right then what would you say? Hopefully you would recognise this as something you would approve of. The problem with this is that a linear model cannot capture this. You need a transformation function to accomplish this.
 
 
 
