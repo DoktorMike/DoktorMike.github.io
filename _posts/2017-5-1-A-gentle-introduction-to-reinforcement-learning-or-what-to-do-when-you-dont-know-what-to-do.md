@@ -44,7 +44,7 @@ def dloss(y, p, dr, x):
 ```
 
 
-![plot of chunk problemplot](/images/figure/problemplot-1.png)
+![plot of all possible solutions](/images/figure/solutiondistribution.png)
 
 # Conclusion
 
