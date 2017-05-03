@@ -29,7 +29,30 @@ We will utilize an environment from the AI Gym called the Cart pole problem. The
 
 ![plot of a working solution](/images/figure/gymcartpolesolved.gif)
 
-As you can see it performs quite well and actually manages to balance the pole by controlling the cart in real time. 
+As you can see it performs quite well and actually manages to balance the pole by controlling the cart in real time. You might think that hey that sounds easy I'll just generate random actions and it should cancel out. Well, put your mind at ease. Below you can see an illustration of that approach failing.
+
+![plot of a working solution](/images/figure/gymcartpolenotsolved.gif)
+
+So to the problem at hand. How can we model this? We need to make an agent that learns a policy that maximizes the future reward right? Right, so at any given time our policy can choose one of two possible actions namely
+
+1. move left
+2. move right
+
+which should sound familiar to you if you've done any modeling before. This is basically a Bernoulli model where the probability distribution looks like this $P(y;p)=p^y(1-p)^{1-y}$. Once we know this the task is to model $p$ as a function of the current state $s_t$. This can be done by doing a linear model wrapped by a sigmoid like this
+
+$$p_t=P(s_t; \omega)=\frac{1}{1+\exp(-\omega s_t)}$$
+
+where $\omega$ are the four parameters that will basically control which way we want to move. These four parameters makes up the policy. With these two pieces we can set up a likelihood function that can drive our learning.
+
+$$L(\omega, s, y)=\prod_{t=1}^T p_t^{y_t}(1-p_t)^{1-y_t} $$
+
+where $p_t$ is defined above. This likelihood we want to maximize and in order to do that we will turn in around and instead minimize the negative log likelihood
+
+$$l(\omega)=-\ln L(\omega, s, y)=-\sum_{t=1}^T \left(y_t \ln p_t + (1-y_t) \ln (1-p_t) \right) $$
+
+$$\frac{\partial l(\omega)}{\partial \omega}=0$$
+
+$$\delta\omega=-\eta\frac{\partial l(\omega)}{\partial \omega}$$
 
 # Implementation
 
@@ -65,6 +88,8 @@ def loss(y, p, dr):
 def dloss(y, p, dr, x):
     return np.reshape(dr*( (1-np.array(y))*p - y*(1-np.array(p))), [len(y),1])*x
 ```
+
+# Multiple solutions
 
 
 ![plot of all possible solutions](/images/figure/solutiondistribution.png)
