@@ -46,18 +46,54 @@ where $\omega$ are the four parameters that will basically control which way we 
 
 $$L(\omega, s, y)=\prod_{t=1}^T p_t^{y_t}(1-p_t)^{1-y_t} $$
 
-where $p_t$ is defined above. This likelihood we want to maximize and in order to do that we will turn in around and instead minimize the negative log likelihood
+where $p_t$ is defined above. This likelihood we want to maximize and in order to do that we will turn it around and instead minimize the negative log likelihood
 
 $$l(\omega)=-\ln L(\omega, s, y)=-\sum_{t=1}^T \left(y_t \ln p_t + (1-y_t) \ln (1-p_t) \right) $$
 
+which can be solved for our simple model by setting
+
 $$\frac{\partial l(\omega)}{\partial \omega}=0$$
 
-$$\delta\omega=-\eta\frac{\partial l(\omega)}{\partial \omega}$$
+and doing the math. However, we want to make this general enough to support more complex policies. As such we will employ gradient descent updates to our parameters $\omega$.
+
+$$\omega^{new}=\omega^{old}-\eta\frac{\partial l(\omega)}{\partial \omega}$$
+
+where $\eta$ is the learning rate. This can also be considered to change over time dynamically but for now let's keep it plain old vanilla. This is it for the theory. Now let's get to the implementation!
 
 # Implementation
+As the AI Gym is mostly available in Python we've chosen to go with that language. This is by no means my preferred language for data science, and I could give you 10 solid arguments as to why it shouldn't be yours either, but that's not what this post is about so I won't. In any case, with Numpy and Pandas you can get quite far. So let's go ahead and import the libraries in Python3 that we're going to need.
+
+```python
+import numpy as np
+import math
+import gym
+```
+
+After this let's look at initiating our environment and setting some variables and placeholders we are going to need.
+
+```python
+env = gym.make('CartPole-v0')
+
+# Configuration
+state = env.reset()
+max_episodes = 2000
+batch_size = 5
+learning_rate = 1
+episodes = 0
+reward_sum = 0
+params = np.random.normal([0,0,0,0], [1,1,1,1])
+render = False
+
+# Define place holders for the problem
+p, action, reward, dreward = 0, 0, 0, 0
+ys, ps, actions, rewards, drewards, gradients = [],[],[],[],[],[]
+states = state
+```
+
+Other than this we're going to use some functions that needs to be defined. I'm sure multiple machine learning frameworks have implemented it already but it's pretty easy to do and quite instructional so why now just do it. ;)
 
 ## The python functions you're going to need
-As we're implementing this in python3 and it's not always straightforward what is python3 and python2 I'm sharing the function definitions with you that I created since they are indeed compliant with the python3 libraries. Especially Numpy which is an integral part of computation in Python. Most of these functions are easily implemented and understood, but they're added here for completeness.
+As we're implementing this in Python3 and it's not always straightforward what is Python3 and Python2 I'm sharing the function definitions with you that I created since they are indeed compliant with the Python3 libraries. Especially Numpy which is an integral part of computation in Python. Most of these functions are easily implemented and understood. Make sure you read through them and grasp what they're all about.
 
 ```python
 def discount_rewards(r, gamma=1-0.99):
@@ -87,6 +123,52 @@ def loss(y, p, dr):
 
 def dloss(y, p, dr, x):
     return np.reshape(dr*( (1-np.array(y))*p - y*(1-np.array(p))), [len(y),1])*x
+```
+
+Armed with these function we're ready to do the main learning loop which is where the logic of the agent and the training takes place. This will be the heaviest part to run through so take your time.
+
+## The learning loop
+
+```python
+while episodes < max_episodes:
+    if reward_sum > 190 or render==True:
+        env.render()
+        render = True
+    p = decide(params, state)
+    action = 1 if p > np.random.uniform() else 0
+    state, reward, done, _ = env.step(action)
+    reward_sum += reward
+    # Add to place holders
+    ps.append(p)
+    actions.append(action)
+    ys.append(action)
+    rewards.append(reward)
+    # Check if the episode is over and calculate gradients
+    if done:
+        episodes += 1
+        drewards = discount_rewards2(rewards)
+        drewards -= np.mean(drewards)
+        drewards /= np.std(drewards)
+        if len(gradients)==0:
+            gradients = dloss(ys, ps, drewards, states).mean(axis=0)
+        else:
+            gradients = np.vstack((gradients, dloss(ys, ps, drewards, states).mean(axis=0)))
+        if episodes % batch_size == 0:
+            params = params - learning_rate*gradients.mean(axis=0)
+            gradients = []
+            print("Average reward for episode", reward_sum/batch_size)
+            if reward_sum/batch_size >= 200:
+                print("Problem solved!")
+            reward_sum = 0
+        # Reset all
+        state = env.reset()
+        y, p, action, reward, dreward, g = 0, 0, 0, 0, 0, 0
+        ys, ps, actions, rewards, drewards = [],[],[],[],[]
+        states = state
+    else:
+        states=np.vstack((states, state))
+
+env.close()
 ```
 
 # Multiple solutions
