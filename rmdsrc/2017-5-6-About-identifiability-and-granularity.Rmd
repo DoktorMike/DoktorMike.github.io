@@ -1,0 +1,178 @@
+---
+title: "About identifiability and granularity"
+author: "Dr. Michael Green"
+date: "May 6, 2017"
+output: html_document
+layout: post
+published: false
+status: process
+use_math: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+library(rstan)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(scales)
+library(dautility)
+library(damodel)
+library(nloptr)
+rstan_options(auto_write = TRUE)
+```
+
+# Motivation for this post
+
+In time series modeling you typically run into issues concerning complexity versus utility. What I mean by that is that there may be questions you need the answer to but are afraid of the model complexity that comes along with it. This fear of complexity is something that relates to identifiability and the curse of dimensionality. Fortunately for us probabilistic programming can handle these things neatly. In this post we're going to look at a problem where we have more parameters than data points which means that maximum likelihood methods are out. We need to use a proper probabilistic model that we will sample in order to get the posterior information we are looking for.
+
+# The generating model
+
+In order to do this exercise we need to know what we're doing and as such we will generate the data we need by simulating a stochastic process. I'm not a big fan of this since simulated data will always be, well simulated, and as such not very realistic. Data in our real world is not random people. This is worth remembering, but as the clients I work with on a daily basis are not inclined to share their precious data, and academic data sets are pointless since they are almost exclusively too nice to represent any real challenge I resort to simulated data. It's enough to make my point. So without furthe ado I give you the generating model.
+
+$$ \begin{align}
+y_t &\sim N(\mu_t, 7)\\
+\mu_t &= x_t + 7 z_t\\
+x_t &\sim N(3, 1)\\
+z_t &\sim N(1, 1)
+\end{align} $$
+
+which is basically a gaussian mixture model. So that represents the ground truth. The time series generated looks like this
+
+```{r problemplot, echo=FALSE, message=FALSE, warning=FALSE, cache=TRUE, fig.width=10}
+mydf <- tibble(x=rnorm(100, 3, 1), z=rnorm(100, 1, 1), y=1*x+7*z+rnorm(100,0,7))
+#ggplot(mydf, aes(y=y, x=x)) + geom_point() + theme_minimal()
+qplotez(mydf$y) + geom_line() + theme_minimal() + ylab("y") + xlab("t")
+```
+
+where time is on the x axis and the response variable on the y axis. The first few lines of the generated data are presented below.
+
+```{r data, echo=FALSE, message=FALSE, warning=FALSE}
+mydf %>% mutate(t=0:(nrow(mydf)-1)) %>% dplyr::select(t, y, x, z) %>% head %>% knitr::kable()
+```
+
+So it's apparent that we have three variables in this data set; the response variable $y$, and the covariates $x$ and $z$ ($t$ is just an indicator of a fake time). So the real model is just a linear model of the two variables. Now say that instead we want to go about solving this problem and we have two individuals arguing about the best solution. Let's call them Mr. Granularity and Mr. Aggregation. Now Mr. Granularity is a fickle bastard as he always wants to split things into more fine grained buckets. Mr. Aggregation on the other hand is more kissable by nature. By that I'm refering to the Occam's razor version of kissable, meaning "Keep It Simple Sir" (KISS). 
+
+This means that Mr. Granularity wants to estimate a parameter for each of the two variables while Mr. Aggregation wants to estimate one parameter for the sum of $x$ and $z$.
+
+# Mr. Granularity's solution
+
+$$ \begin{align}
+y_t &\sim N(\mu_t, \sigma)\\
+\mu_t &=\beta_x x_t + \beta_z z_t + \beta_0\\ 
+\beta_x &\sim N(0, 5)\\
+\beta_z &\sim N(0, 5)\\
+\beta_0 &\sim N(0, 5)\\
+\sigma &\sim U(0.01, \inf) 
+\end{align} $$
+
+
+```{r lmoutput, message=FALSE, warning=FALSE, include=FALSE}
+mylm<-lm(y~x+z, data=mydf)
+mylm2<-lm(y~I(x+z), data=mydf)
+```
+
+
+```{r baysfit, message=FALSE, warning=FALSE, include=FALSE, cache=TRUE}
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+modelstring<-"
+data {
+  int N;
+  real x[N];
+  real z[N];
+  real y[N];
+}
+parameters {
+  real b0;
+  real bx;
+  real bz;
+  real sigma;
+}
+model {
+  b0 ~ normal(0, 5);
+  bx ~ normal(0, 5);
+  bz ~ normal(0, 5);
+  for(n in 1:N)
+    y[n] ~ normal(bx*x[n]+bz*z[n]+b0, sigma);
+}
+generated quantities {
+  real y_pred[N];
+  for (n in 1:N)
+    y_pred[n] = x[n]*bx+z[n]*bz+b0;
+}
+"
+sfit<-stan(model_code = modelstring, data = list(N=nrow(mydf), x=mydf$x, z=mydf$z, y=mydf$y))
+```
+
+# Mr. Aggregation's solution
+
+$$ \begin{align}
+y_t &\sim N(\mu_t, \sigma)\\
+\mu_t &=\beta_r (x_t + z_t) + \beta_0\\ 
+\beta_r &\sim N(0, 5)\\
+\beta_0 &\sim N(0, 5)\\
+\sigma &\sim U(0.01, \inf) 
+\end{align} $$
+
+```{r baysfit2, message=FALSE, warning=FALSE, include=FALSE, cache=TRUE}
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+modelstring<-"
+data {
+  int N;
+  real x[N];
+  real z[N];
+  real y[N];
+}
+parameters {
+  real b0;
+  real br;
+  real sigma;
+}
+model {
+  b0 ~ normal(0, 5);
+  br ~ normal(0, 5);
+  for(n in 1:N)
+    y[n] ~ normal(br*(x[n]+z[n])+b0, sigma);
+}
+generated quantities {
+  real y_pred[N];
+  for (n in 1:N)
+    y_pred[n] = (x[n]+z[n])*br+b0;
+}
+"
+sfit2<-stan(model_code = modelstring, data = list(N=nrow(mydf), x=mydf$x, z=mydf$z, y=mydf$y))
+```
+
+# Analysis
+
+```{r converttoggs, message=FALSE, warning=FALSE, include=FALSE}
+library(ggmcmc)
+myggs<-ggs(sfit)
+myggs2<-ggs(sfit2)
+```
+
+```{r distributions, echo=FALSE, message=FALSE, warning=FALSE, fig.width=10}
+multiplot(ggs_caterpillar(myggs, family = "b") + xlim(-11,11) + theme_minimal(), 
+          ggs_caterpillar(myggs2, family = "b") + xlim(-11,11) + theme_minimal(), cols=2)
+```
+
+### Parameter distributions - Granular model
+
+```{r Table1, echo=FALSE, message=FALSE, warning=FALSE}
+sfitsum<-summary(sfit)
+sfitsum$summary[grep("b", rownames(sfitsum$summary)), c(1,4:8)] %>% 
+  knitr::kable(digits = c(2,2,2,2,2,2))
+```
+
+### Parameter distributions - Aggregated model
+
+```{r Table2, echo=FALSE, message=FALSE, warning=FALSE}
+sfitsum2<-summary(sfit2)
+sfitsum2$summary[grep("b", rownames(sfitsum2$summary)), c(1,4:8)] %>% 
+  knitr::kable(digits = c(2,2,2,2,2,2))
+```
+
+
