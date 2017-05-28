@@ -40,7 +40,7 @@ z_t &\sim N(1, 1)
 
 which is basically a gaussian mixture model. So that represents the ground truth. The time series generated looks like this
 
-```{r problemplot, echo=FALSE, message=FALSE, warning=FALSE, cache=TRUE, fig.width=10}
+```{r problemplot12, echo=FALSE, message=FALSE, warning=FALSE, cache=TRUE, fig.width=10}
 mydf <- tibble(x=rnorm(100, 3, 1), z=rnorm(100, 1, 1), y=1*x+7*z+rnorm(100,0,7))
 #ggplot(mydf, aes(y=y, x=x)) + geom_point() + theme_minimal()
 qplotez(mydf$y) + geom_line() + theme_minimal() + ylab("y") + xlab("t")
