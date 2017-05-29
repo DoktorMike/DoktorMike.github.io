@@ -77,7 +77,7 @@ mylm2<-lm(y~I(x+z), data=mydf)
 ```
 
 
-```{stan model1, output.var="model1", cache=TRUE}
+```{r eval=FALSE}
 data {
   int N;
   real x[N];
@@ -107,7 +107,33 @@ generated quantities {
 ```{r baysfit, message=FALSE, warning=FALSE, include=FALSE, cache=TRUE}
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
-sfit<-sampling(model1, data = list(N=nrow(mydf), x=mydf$x, z=mydf$z, y=mydf$y))
+modelstring<-"
+data {
+  int N;
+  real x[N];
+  real z[N];
+  real y[N];
+}
+parameters {
+  real b0;
+  real bx;
+  real bz;
+  real<lower=0> sigma;
+}
+model {
+  b0 ~ normal(0, 5);
+  bx ~ normal(0, 5);
+  bz ~ normal(0, 5);
+  for(n in 1:N)
+    y[n] ~ normal(bx*x[n]+bz*z[n]+b0, sigma);
+}
+generated quantities {
+  real y_pred[N];
+  for (n in 1:N)
+    y_pred[n] = x[n]*bx+z[n]*bz+b0;
+}
+"
+sfit<-stan(model_code = modelstring, data = list(N=nrow(mydf), x=mydf$x, z=mydf$z, y=mydf$y))
 ```
 
 # Mr. Aggregation's solution
@@ -123,7 +149,7 @@ y_t &\sim N(\mu_t, \sigma)\\
 \end{align} $$
 
 
-```{stan model2, output.var="model2"}
+```{r eval=FALSE}
 data {
   int N;
   real x[N];
@@ -151,7 +177,31 @@ generated quantities {
 ```{r baysfit2, message=FALSE, warning=FALSE, include=FALSE, cache=TRUE}
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
-sfit2<-sampling(model2, data = list(N=nrow(mydf), x=mydf$x, z=mydf$z, y=mydf$y))
+modelstring2<-"
+data {
+  int N;
+  real x[N];
+  real z[N];
+  real y[N];
+}
+parameters {
+  real b0;
+  real br;
+  real<lower=0> sigma;
+}
+model {
+  b0 ~ normal(0, 5);
+  br ~ normal(0, 5);
+  for(n in 1:N)
+    y[n] ~ normal(br*(x[n]+z[n])+b0, sigma);
+}
+generated quantities {
+  real y_pred[N];
+  for (n in 1:N)
+    y_pred[n] = (x[n]+z[n])*br+b0;
+}
+"
+sfit2<-stan(model_code = modelstring2, data = list(N=nrow(mydf), x=mydf$x, z=mydf$z, y=mydf$y))
 ```
 
 # Analysis
