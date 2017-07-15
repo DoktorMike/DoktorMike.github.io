@@ -1,7 +1,7 @@
 ---
 title: "Building and testing a simple deep learning object detection application"
 author: "Dr. Michael Green"
-date: "July 11, 2017"
+date: "July 15, 2017"
 output: html_document
 layout: post
 published: true
@@ -41,6 +41,6 @@ The video below was shot from my cell phone while the modeling team was working.
 
 ![continuous object detection](/images/figure/objdetect/bw7modelers.gif)
 
-In this short post I showed you how it's possible to utilize a previously fitted convolutional neural network and classify objects in a retrospective video. However this can be extended into a live object detection from a webcam or a surveillance camera. If you're interested in doing this yourself have a look at Tensorflow's example [here](https://github.com/tensorflow/models/blob/master/object_detection/object_detection_tutorial.ipynb). 
+In this short post I showed you how it's possible to utilize a previously fitted convolutional neural network and classify objects in a retrospective video. However this can be extended into a live object detection from a webcam or a surveillance camera. If you're interested in doing this yourself have a look at Tensorflow's example [here](https://github.com/tensorflow/models/blob/master/object_detection/object_detection_tutorial.ipynb).
 
 Happy hacking!
