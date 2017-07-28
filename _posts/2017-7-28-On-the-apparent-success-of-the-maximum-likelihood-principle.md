@@ -44,8 +44,8 @@ For those of you wth modeling experience you will see that a mere intra-weekly s
 
 We're going to estimate the parameters of this model by
 
-1. The full Bayesian treatment, i.e., we're going to estimate $$p(\beta|y, X)$$
-2. The Maximum likelihood, i.e., we're going to estimate $$p(y|\beta, X)$$ which in the tables and the plots will be referred to as "Freq" from the term "Frequentist" which I inherently dislike but I made the tables and plots a while ago so bear with me.
+* The full Bayesian treatment, i.e., we're going to estimate $$p(\beta|y, X)$$
+* The Maximum likelihood, i.e., we're going to estimate $$p(y|\beta, X)$$ which in the tables and the plots will be referred to as "Freq" from the term "Frequentist" which I inherently dislike but I made the tables and plots a while ago so bear with me.
 
 If you rememeber your probability theory training you know that $p(\beta|y, X) \neq p(y|\beta, X)$. Sure but so what? Well, this matters a lot. In order to see why let's dig into these terms. First off, let's have a look at the proper full Bayesian treatment. We can express that posterior distribution using three terms, namely the
 
