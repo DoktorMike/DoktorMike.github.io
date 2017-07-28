@@ -308,7 +308,9 @@ As you can see these estimates are quite different and to the naked eye makes mo
 mcmc_areas(sfitarr, regex_pars = "bweekdayhat\\[") 
 ```
 
-So from a model estimation standpoint we should be pretty happy now. But how does this new estimation compare to the others? Below I will repeat the model performance table from earlier and extend it with our new "Bayes2" estimation. 
+So from a model estimation standpoint we should be pretty happy now. 
+
+But how does this new estimation compare to the others? Below I will repeat the model performance table from earlier and extend it with our new "Bayes2" estimation. 
 
 ```{r performanceextended, echo=FALSE, message=FALSE, warning=FALSE}
 preddf <- mutate(preddf, Bayes2=colMeans(sfitdf[, grep("^yhat", colnames(sfitdf), value=T)]))
