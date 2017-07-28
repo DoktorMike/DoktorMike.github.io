@@ -88,7 +88,7 @@ mylm <- lm(y~WDay1+WDay2+WDay3+WDay4+WDay5+WDay6+WDay7, data=ourdata)
 
 meanwhile in Stan we're doing the following, admittedly a bit more complicated, code.
 
-```{stan output.var="mugga1", eval=FALSE}
+```{stan output.var="flugga1", eval=FALSE}
 data {
   int< lower = 0 > N;       // Number of data points
   vector[N] y;              // The response variable
@@ -249,7 +249,7 @@ y_t &\sim N(\mu_t, \sigma)\\
 
 where $\mu_y^{emp}$ and $\sigma_y^{emp}$ are the empirical mean and standard deviation of the response variable respectively. This is a nice practical hack since it makes sure that your priors are in the vicinity of the response you're trying to model. The resulting code is given below. You can try it on your own daily time series. It's quite plug and play. 
 
-```{stan output.var="mugga3"}
+```{stan output.var="flugga3"}
 data {
   int< lower = 0 > N;       // Number of data points
   vector[N] y;          // The response variable
@@ -291,7 +291,7 @@ generated quantities {
 ```
 
 ```{r stanrun, message=FALSE, warning=FALSE, include=FALSE}
-sfit2<-sampling(mugga3, data=list(N=nrow(data), y=data$y, xweekday=select(data, matches("WDay"))), chains=2, iter=1000)
+sfit2<-sampling(flugga3, data=list(N=nrow(data), y=data$y, xweekday=select(data, matches("WDay"))), chains=2, iter=1000)
 ```
 
 Now let's have a look at this model instead. A quick look into these parameters show that we have nice clean unimodal posteriors due to our prior beliefs being applied to the analysis. The same table as shown previously is not shown below with the results for the new estimation appended to the rightmost side. For clarification we name the columns Estimate and SD. 
