@@ -13,8 +13,7 @@ use_math: true
 
 # Motivation
 
-I love new initiatives that tries to do something new and innovative. The relatively new language Julia is one of my favorite languages. It features a lot of good stuff in addition to being targeted towards computational people like me. I won't bore you with the details of the language itself but suffice it to say that we finally have a general purpose language where you don't have to compromise expressiveness with efficiency.
-
+I love new initiatives that tries to do something fresh and innovative. The relatively new language [Julia](https://julialang.org/) is one of my favorite languages. It features a lot of good stuff in addition to being targeted towards computational people like me. I won't bore you with the details of the language itself but suffice it to say that we finally have a general purpose language where you don't have to compromise expressiveness with efficiency.
 
 
 ## Prerequisites
@@ -23,16 +22,13 @@ When reading this it helps if you have a basic understanding of Neural networks 
 
 # Short introductory example - Boston Housing
 
-Instead of writing on and on about how cool this new language is I will just show you how quickly you can get a simple neural network up and running. The first example we will create is the BostonHousing (http://www.cs.toronto.edu/~delve/data/boston/bostonDetail.html) dataset. This is baked into the deep learning library Knet. So let's start by fetching the data.
+Instead of writing on and on about how cool this new language is I will just show you how quickly you can get a simple neural network up and running. The first example we will create is the [BostonHousing](http://www.cs.toronto.edu/~delve/data/boston/bostonDetail.html) dataset. This is baked into the deep learning library Knet. So let's start by fetching the data.
 
 ```julia
 using Knet;
 include(Knet.dir("data","housing.jl"));
 x,y = housing();
 ```
-
-
-
 
 Now that we have the data we also need to define the basic functions that will make up our network. We will start with the predict function where we define $\omega$ and $x$ as input. $\omega$ in this case is our parameters which is a 2 element array containing weights in the first element and biases in the second. The $x$ contains the dataset which in our case is a matrix of size 506x13, i.e., 506 observations and 13 covariates.
 
@@ -477,3 +473,9 @@ So give it a go and see how you like it!
 
 
 Happy inferencing!
+
+# Links and resources
+- Knet: (http://denizyuret.github.io/Knet.jl/latest/)
+- MXNet: (http://mxnet.incubator.apache.org/)
+- Julia: (https://julialang.org/)
+
