@@ -26,3 +26,11 @@ for i in 1:10 {
 }
 ```
 
+### Python code
+
+```python
+a = range(10)
+for i in a:
+    print("Hello {}".format(i))
+```
+
