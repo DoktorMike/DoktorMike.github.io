@@ -37,14 +37,15 @@ where $x_1$ and $x_2$ are realized samples from the two dimensional multivariate
  
 where the correlation between our variables are obvious. So let's plot each variable against it's response and have a look. As you can see it's quite apparent that the variables are rather similar.
  
-
-    Sigma <- matrix(c(3, 2.5, 2.5, 3), 2, 2)
-    mydf <- as_tibble(data.frame(mvrnorm(500, c(10, 10), Sigma))) %>%
-      mutate(y = 1 * X1 + 1 * X2 + 1 * X1 * X2 + 5 + rnorm(length(X1), 0, 20))
-    gather(mydf, variable, value, -y) %>% 
-      ggplot(aes(y = y, x = value, color = variable)) +
-      geom_point() + geom_smooth() + xlab("Variable value") + ylab("y") + 
-      facet_grid(. ~ variable)
+``` r
+Sigma <- matrix(c(3, 2.5, 2.5, 3), 2, 2)
+mydf <- as_tibble(data.frame(mvrnorm(500, c(10, 10), Sigma))) %>% 
+    mutate(y = 1 * X1 + 1 * X2 + 1 * X1 * X2 + 5 + rnorm(length(X1), 0, 20))
+gather(mydf, variable, value, -y) %>% 
+    ggplot(aes(y = y, x = value, color = variable)) +
+    geom_point() + geom_smooth() + xlab("Variable value") + ylab("y") + 
+    facet_grid(. ~ variable)
+```
 
 ![plot of chunk dataplotforvariables](/images/figure/dataplotforvariables-1.png)
  
