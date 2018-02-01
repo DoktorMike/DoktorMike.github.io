@@ -1,5 +1,5 @@
 ---
-title: "Exploring Deep Learning in Julia"
+title: "The importance of context"
 author: "Dr. Michael Green"
 date: "`r Sys.Date()`"
 output: html_document
@@ -29,81 +29,127 @@ rstan_options(auto_write = TRUE)
 
 # Motivation
 
-I love new initiatives that tries to do something new and innovative. The relatively new language Julia is one of my favorite languages. It features a lot of good stuff in addition to being targeted towards computational people like me. I won't bore you with the details of the language itself but suffice it to say that we finally have a general purpose language where you don't have to compromise expressiveness with efficiency.
+When we do modeling it's of utmost importance that we pay attention to context. Without context there is little that can be inferred. 
 
-# Short introductory example
+```{r dataprep, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+n <- 500
+# Systolic blood pressure 70, 190 in mmHg top number
+x1 <- rnorm(n, 130, 20)
+# Diastolic blood pressure 40, 100 in mmHg bottom number
+x2 <- rnorm(n, 70, 8)
+# Predicted years to live (50 years is the minimum)
+# y1 <- x1*0.1 + 50 + rnorm(length(x1), 0, 5)
+# y2 <- (x1+500)*0.1 + rnorm(length(x1), 0, 5)
+# y1 <- x1*0.1 + 50 + rnorm(length(x1), 0, 5)
+# y1 <- x1*1 + x2*1 - 100 + rnorm(length(x1), 0, 5)
+# y2 <- x1*(70/130) + x2*(130/70) - 100 + rnorm(length(x1), 0, 5)
+y <- rnorm(n, 70 + 130, 30) - 100
+y1 <- x1*rnorm(n, 1, 0.1) + x2*rnorm(n, 1, 0.1) - 100
+y2 <- x1*rnorm(n, 70/130, 0.1) + x2*rnorm(n, 130/70, 0.1) - 100
+mydf <- tibble(y=y, y1=y1, y2=y2, x1=x1, x2=x2)
+summary(lm(y~x1+x2, data=mydf))
 
-Instead of writing on and on about how cool this new language is I will just show you how quickly you can get a simple neural network up and running. The first example we will create is the BostonHousing dataset. This is baked into the deep learning library Knet. So let's start by fetching the data.
-
-```{julia}
-using Knet;
-
-include(Knet.dir("data","housing.jl"));
-x,y = housing();
+Sigma <- matrix(c(3,2.5,2.5,3),2,2)
+mydf <- as_tibble(data.frame(mvrnorm(500, c(10, 10), Sigma))) %>% 
+  mutate(y=1*X1+1*X2+1*X1*X2+5+rnorm(length(X1), 0, 20))
+summary(mylm <- lm(y~X1+X2+X1:X2, data=mydf))
 ```
 
-Now that we have the data we also need to define the basic functions that will make up our network. We will start with the predict function where we define $\omega$ and $x$ as input. $\omega$ in this case is our parameters which is a 2 element array containing weights in the first element and biases in the second. The $x$ contains the dataset which in our case is a matrix of size 506x13, i.e., 506 observations and 13 covariates.
+Let's create a correlated dummy dataset that will allow me to highlight my point. In this case we'll just sample our data from a two dimensional multivariate gaussian distribution specified by the mean vector $\mu_X$ and covariance matrix $\Sigma_X$. We will also create a response variable $y$ which is defined like
 
-```{julia}
-using Knet;
+$$y_t\sim N(\mu_{y,t}, \sigma_y)$$
+$$\mu_{y,t}=1x_1+1x_2+1x_1 x_2+5$$
+$$\sigma_y\sim N(0,20)$$
 
-predict(ω, x) = ω[1] * x .+ ω[2];
-loss(ω, x, y) = mean(abs2, predict(ω, x)-y);
-lossgradient = grad(loss);
+where $x_1$ and $x_2$ are realized samples from the two dimensional multivariate guassian distribution above. This covariance matrix looks like this
 
-function train(ω, data; lr=0.01) 
-    for (x,y) in data
-        dω = lossgradient(ω, x, y)
-        for i in 1:length(ω)
-            ω[i] -= dω[i]*lr
-        end
-    end
-    return ω
-end;
+```{r Sigmaoutput, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+Sigma <- matrix(c(3, 2.5, 2.5, 3), 2, 2)
+rownames(Sigma)<-c("X1", "X2")
+colnames(Sigma)<-c("X1", "X2")
+knitr::kable(Sigma)
 ```
 
-Let's have a look at the first 5 variables of the data set.
+where the correlation between our variables are obvious. So let's plot each variable against it's response and have a look. As you can see it's quite apparent that the variables are rather similar.
 
-```{julia dataview}
-using Knet;
-using Plots;
-using StatPlots;
-
-include(Knet.dir("data","housing.jl"));
-x,y = housing();
-gr();
-scatter(x', y[1,:], layout=(3,5), reg=true, size=(800,500))
+```{r dataplotforvariables, echo=TRUE, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+Sigma <- matrix(c(3, 2.5, 2.5, 3), 2, 2)
+mydf <- as_tibble(data.frame(mvrnorm(500, c(10, 10), Sigma))) %>%
+  mutate(y = 1 * X1 + 1 * X2 + 1 * X1 * X2 + 5 + rnorm(length(X1), 0, 20))
+gather(mydf, variable, value, -y) %>% 
+  ggplot(aes(y = y, x = value, color = variable)) +
+  geom_point() + geom_smooth() + xlab("Variable value") + ylab("y") + 
+  facet_grid(. ~ variable)
 ```
 
-Here's the training part of the script where we define and train a perceptron, i.e., a linear neural network on the Boston Housing dataset. We track the error every 10th epoch and register it in our DataFrame. 
+What would you expect us to get from it if we fit a simple model? We have generated 500 observations and we are estimating 4 coefficients. Should be fine right? Well it turns out it's not fine at all. Not fine at all. Remember that we defined our coefficients to be 1 both for the independent effects and for the interaction effects between $x_1$ and $x_2$. The intercept is set to $5$. In other words we actually have point parameters here behind the physical model. This is an assumption that in most modeling situations would be crazy, but we use it here to highlight a point. Let's make a linear regression model with the interaction effects present.
 
-```{julia}
-using DataFrames
-ω = Any[ 0.1*randn(1,13), 0.0 ];
-errdf = DataFrame(Epoch=1:10, Error=0.0);
-cntr = 1;
-for i=1:100
-    train(ω, [(x,y)])
-    if mod(i, 10) == 0
-        println("Epoch $i: $(loss(ω,x,y))")
-        errdf[cntr, :Epoch]=i
-        errdf[cntr, :Error]=loss(ω,x,y)
-        cntr+=1
-    end
-end
-display(errdf)
+```{r modelbuild, message=FALSE, warning=FALSE, paged.print=FALSE}
+mylm <- lm(y~X1+X2+X1:X2, data=mydf)
 ```
 
-Test it.
+In R you specify interaction effects like this ":" which might look a bit weird but just accept it for now. It could have been written in other ways but I like to be explicit. Now that we have this model we can investigate what it says about our unknown parameters that we estimated.
 
-```{julia}
-a = DataFrame(A=randn(10), B=randn(10))
-a
-for i in 1:10
-  a[i, :A] = 0.5
-end
-display(a)
-gr()
-scatter(a[:, :A], a[:, :B])
+
+```{r regression1out, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(sjmisc)
+library(sjPlot)
+library(magrittr)
+library(knitr)
+
+mylm <- lm(y~X1+X2+X1:X2, data=mydf)
+mylm %>% sjt.lm(no.output = TRUE, show.se = TRUE) %>% 
+  return() %>% .[["knitr"]] %>% asis_output
 ```
 
+
+A quick look at the table reveals a number of pathologies. If we look at the intercept we can see that it's `r round(coef(mylm)[1]/5-1,2)*100` per cent off. For the $x_1$ and $x_2$ variables we're `r round(coef(mylm)[2]/1-1,2)*100` and `r round(coef(mylm)[3]/1-1,2)*100` per cent off respectively. The interaction effect ends up being `r round(coef(mylm)[4]/1-1,2)*100` percent off target which is `r ifelse(abs(coef(mylm)[4]/1-1)>0.2, "a lot", "not much")`. All in all though, we're significantly off the target. This is not surprising though. In fact, I would have been surprised had we succeeded. So what's the problem? Well, the problem is that our basic assumption of independence between variables quite frankly does not hold. The reason why it doesn't hold is because the generated data is indeed correlated. Remember our covariance matrix in the two dimensional multivariate gaussian. 
+
+Let's try to fix our analysis. In this setting we need to introduce context and the easiest most natural way to deal with that are priors. To do this we cannot use our old trusted friend "lm" in R but must resort to a bayesian framework. [Stan](http://mc-stan.org) makes that very simple. This implementation of our model is not very elegant but it will neatly show you how easily you can define models in this language. We simply specify our data, parameters and model. We set the priors in the model part. Notice here that we don't put priors on everything. For instance. I might know that a value around 1 is reasonable for our main and interaction effects but I have no idea of where the intercept should be. In this case I will simple be completely ignorant and not inject my knowledge into the model about the intercept because I fundamentally believe I don't have any. That's why $\beta_0$ does not appear in the model section. 
+
+```{stan ex1model, echo=TRUE, output.var="ex1", cache=FALSE}
+data {
+  int<lower=0> N;
+  real y[N];
+  real x1[N];
+  real x2[N];
+}
+parameters {
+  real b0;
+  real b1;
+  real b2;
+  real b3;
+  real<lower=1> sigma;
+}
+model {
+  b1 ~ normal(1, 0.5);
+  b2 ~ normal(1, 0.5);
+  b3 ~ normal(1, 0.5);
+  for(i in 1:N) y[i] ~ normal(b0+b1*x1[i]+b2*x2[i]+b3*x1[i]*x2[i], sigma);
+}
+```
+
+```{r ex1stanfit, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(rstan)
+sfit<-sampling(ex1, data=list(N=nrow(mydf), y=mydf$y, x1=mydf$X1, x2=mydf$X2), chains=2, cores=2)
+```
+
+If we go ahead and run this model we get the inference after the MCMC engine is done. The summary of the bayesian model can be seen below where the coefficients make a lot more sense.
+
+```{r ex1stanfitsummary, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+sfitarray<-as.array(sfit)
+summary(sfit)$summary[,c(1,3:4,8)]
+```
+
+If we look at the distributions for our parameters we can see that in the right context we capture the essense of our model but moreover we also see the support the data gives to the different possible values. We select 80 percent intervals here to illustrate the width of the distribution and the mass.
+
+```{r histogramsex1, echo=FALSE, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(bayesplot)
+mcmc_areas(sfitarray, regex_pars = "b[1-3]", rhat=rhat(sfit)[4:6], prob = 0.8) +
+ ggplot2::labs(
+   title = "Posterior distributions",
+   subtitle = "with medians and 80% intervals"
+ )
+```
+
+Notice here that we are around the right area and we don't get the crazy results that we got from our regression earlier. This is because of our knowledge (context) of the problem. The model armed with our knowledge correctly realizes that there are many possible values for the intercept and the width of that distribution is a testement to that. Further there's some uncertainty about the value for the main effects in the model meanwhile the interaction effect is really nailed down and our estimate here is not uncertain at all.
