@@ -22,7 +22,9 @@ When we do modeling it's of utmost importance that we pay attention to context. 
 Let's create a correlated dummy dataset that will allow me to highlight my point. In this case we'll just sample our data from a two dimensional multivariate gaussian distribution specified by the mean vector $\mu_X$ and covariance matrix $\Sigma_X$. We will also create a response variable $y$ which is defined like
  
 $$y_t\sim N(\mu_{y,t}, \sigma_y)$$
+ 
 $$\mu_{y,t}=1x_1+1x_2+1x_1 x_2+5$$
+ 
 $$\sigma_y\sim N(0,20)$$
  
 where $x_1$ and $x_2$ are realized samples from the two dimensional multivariate guassian distribution above. This covariance matrix looks like this
