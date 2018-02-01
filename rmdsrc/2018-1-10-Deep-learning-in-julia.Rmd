@@ -1,0 +1,109 @@
+---
+title: "Exploring Deep Learning in Julia"
+author: "Dr. Michael Green"
+date: "`r Sys.Date()`"
+output: html_document
+layout: post
+published: true
+status: publish
+use_math: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+# knitr::knit_engines$set(julia = JuliaCall::eng_juliacall)
+library(rstan)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(scales)
+library(dautility)
+library(nloptr)
+library(brms)
+library(bayesplot)
+library(JuliaCall)
+rstan_options(auto_write = TRUE)
+```
+
+
+# Motivation
+
+I love new initiatives that tries to do something new and innovative. The relatively new language Julia is one of my favorite languages. It features a lot of good stuff in addition to being targeted towards computational people like me. I won't bore you with the details of the language itself but suffice it to say that we finally have a general purpose language where you don't have to compromise expressiveness with efficiency.
+
+# Short introductory example
+
+Instead of writing on and on about how cool this new language is I will just show you how quickly you can get a simple neural network up and running. The first example we will create is the BostonHousing dataset. This is baked into the deep learning library Knet. So let's start by fetching the data.
+
+```{julia}
+using Knet;
+
+include(Knet.dir("data","housing.jl"));
+x,y = housing();
+```
+
+Now that we have the data we also need to define the basic functions that will make up our network. We will start with the predict function where we define $\omega$ and $x$ as input. $\omega$ in this case is our parameters which is a 2 element array containing weights in the first element and biases in the second. The $x$ contains the dataset which in our case is a matrix of size 506x13, i.e., 506 observations and 13 covariates.
+
+```{julia}
+using Knet;
+
+predict(ω, x) = ω[1] * x .+ ω[2];
+loss(ω, x, y) = mean(abs2, predict(ω, x)-y);
+lossgradient = grad(loss);
+
+function train(ω, data; lr=0.01) 
+    for (x,y) in data
+        dω = lossgradient(ω, x, y)
+        for i in 1:length(ω)
+            ω[i] -= dω[i]*lr
+        end
+    end
+    return ω
+end;
+```
+
+Let's have a look at the first 5 variables of the data set.
+
+```{julia dataview}
+using Knet;
+using Plots;
+using StatPlots;
+
+include(Knet.dir("data","housing.jl"));
+x,y = housing();
+gr();
+scatter(x', y[1,:], layout=(3,5), reg=true, size=(800,500))
+```
+
+Here's the training part of the script where we define and train a perceptron, i.e., a linear neural network on the Boston Housing dataset. We track the error every 10th epoch and register it in our DataFrame. 
+
+```{julia}
+using DataFrames
+ω = Any[ 0.1*randn(1,13), 0.0 ];
+errdf = DataFrame(Epoch=1:10, Error=0.0);
+cntr = 1;
+for i=1:100
+    train(ω, [(x,y)])
+    if mod(i, 10) == 0
+        println("Epoch $i: $(loss(ω,x,y))")
+        errdf[cntr, :Epoch]=i
+        errdf[cntr, :Error]=loss(ω,x,y)
+        cntr+=1
+    end
+end
+display(errdf)
+```
+
+Test it.
+
+```{julia}
+a = DataFrame(A=randn(10), B=randn(10))
+a
+for i in 1:10
+  a[i, :A] = 0.5
+end
+display(a)
+gr()
+scatter(a[:, :A], a[:, :B])
+```
+
