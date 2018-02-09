@@ -141,7 +141,7 @@ where we have used $n$ general variables representing our probability landscape.
 
 So remember to always think of the context if you hear someone name dropping the "chain rule", since without context it's quite ambiguous. 
 
-##Building your own backpropagation engine for deep neural networks
+## Building your own backpropagation engine for deep neural networks
 
 In this section I'll take you through a simple multi-layered perceptron and a derivation of the backpropagation algorithm. There are many ways to derive this but I'll start from the error minimization approach which basically describes the fit of a neural network $f(\pmb x, \pmb\theta)$ by the deviance from a known target $y$. The architecture we will solve for is shown in the image below where we have two hidden layers. We stick to this for simplicity. We'll also only use one output instead of multiple but it's readily generalizable. 
 
