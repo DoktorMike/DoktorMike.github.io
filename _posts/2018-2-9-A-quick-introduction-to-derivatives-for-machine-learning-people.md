@@ -9,9 +9,6 @@ status: publish
 use_math: true
 ---
 
-# A quick introduction to derivatives for machine learning people
-
-
 ## Introduction
 
 If you're like me you probably have used derivatives for a huge part of your life and learned a few rules on how they work and behave without actually understanding where it all comes from. As kids we learn some of these rules early on like the power rule for example in which we know that the derivative of $x^2$ is $2x$ which in a more general form turns to $\frac{dx^a}{dx}=ax^{a-1}$. This is in principle fine since all rules can be readily memorized and looked up in a table. The downside of that is of course that you're using a system and a formalism that you fundamentally do not understand. Again not necessarily an issue if you are not developing machine learning frameworks yourself on a daily basis but nevertheless it's really nice to know what's going on behind the scenes. I myself despise black boxes . So in order to dig a little bit deeper into that I'll show you what it's all based on. To do that we have to define what a derivative is supposed to do for you. Do you know? I'm sure you do, but just in case you don't;
