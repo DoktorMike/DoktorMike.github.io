@@ -316,7 +316,7 @@ So armed with this information we look to another nice deep learning framework c
 We start by loading the package in Julia and declaring a Variable in the MXNet framework called "data". This will serve as our reference to a data set that we wish to run the network on. Before we move on I should say that MXNet allows for two programming paradigms.
 - Imperative
 - Symbolic
-The symbolic paradigm is the one used by PyTorch and Tensorflow where you define a computational graph and then do operations on it. Thus nothing gets executed until you run data through it. Imperative works more like normal programming which is line by line basis. Both approches have their benefits and caveats and fortunately MXNet supports both. For the remainder of this post we will use the Symbolic interface.
+The symbolic paradigm is the one used by Tensorflow where you define a computational graph and then do operations on it. Thus nothing gets executed until you run data through it. Imperative works more like normal programming which is line by line basis. Both approches have their benefits and caveats and fortunately MXNet and PyTorch supports both. For the remainder of this post we will use the Symbolic interface.
 
 ```julia
 using MXNet
