@@ -6,29 +6,42 @@ layout: post
 use_math: true
 ---
  
+In time series modeling you typically run into issues concerning complexity
+versus utility. What I mean by that is that there may be questions you need the
+answer to but are afraid of the model complexity that comes along with it. This
+fear of complexity is something that relates to identifiability and the curse of
+dimensionality. Fortunately for us probabilistic programming can handle these
+things neatly. In this post we're going to look at a problem where we have a
+choice between a granular model and an aggregated one. We need to use a proper
+probabilistic model that we will sample in order to get the posterior
+information we are looking for.
  
-
+## The generating model
  
-# Motivation for this post
+In order to do this exercise we need to know what we're doing and as such we
+will generate the data we need by simulating a stochastic process. I'm not a big
+fan of this since simulated data will always be, well simulated, and as such not
+very realistic. Data in our real world is not random people. This is worth
+remembering, but as the clients I work with on a daily basis are not inclined to
+share their precious data, and academic data sets are pointless since they are
+almost exclusively too nice to represent any real challenge I resort to
+simulated data. It's enough to make my point. So without further ado I give you
+the generating model.
  
-In time series modeling you typically run into issues concerning complexity versus utility. What I mean by that is that there may be questions you need the answer to but are afraid of the model complexity that comes along with it. This fear of complexity is something that relates to identifiability and the curse of dimensionality. Fortunately for us probabilistic programming can handle these things neatly. In this post we're going to look at a problem where we have a choice between a granular model and an aggregated one. We need to use a proper probabilistic model that we will sample in order to get the posterior information we are looking for.
- 
-# The generating model
- 
-In order to do this exercise we need to know what we're doing and as such we will generate the data we need by simulating a stochastic process. I'm not a big fan of this since simulated data will always be, well simulated, and as such not very realistic. Data in our real world is not random people. This is worth remembering, but as the clients I work with on a daily basis are not inclined to share their precious data, and academic data sets are pointless since they are almost exclusively too nice to represent any real challenge I resort to simulated data. It's enough to make my point. So without further ado I give you the generating model.
- 
-$$ \begin{align}
+$$\begin{align}
 y_t &\sim N(\mu_t, 7)\\
 \mu_t &= x_t + 7 z_t\\
 x_t &\sim N(3, 1)\\
 z_t &\sim N(1, 1)
-\end{align} $$
+\end{align}$$
  
-which is basically a gaussian mixture model. So that represents the ground truth. The time series generated looks like this
+which is basically a gaussian mixture model. So that represents the ground
+truth. The time series generated looks like this
  
 ![plot of chunk problemplot12](/images/figure/problemplot12-1.png)
  
-where time is on the x axis and the response variable on the y axis. The first few lines of the generated data are presented below.
+where time is on the x axis and the response variable on the y axis. The first
+few lines of the generated data are presented below.
  
 
 |  t|         y|        x|          z|
@@ -40,11 +53,19 @@ where time is on the x axis and the response variable on the y axis. The first f
 |  4| -5.391217| 4.924959| -0.4488093|
 |  5| -1.360732| 3.237641| -0.1645335|
  
-So it's apparent that we have three variables in this data set; the response variable $$y$$, and the covariates $$x$$ and $$z$$ ($$t$$ is just an indicator of a fake time). So the real model is just a linear model of the two variables. Now say that instead we want to go about solving this problem and we have two individuals arguing about the best solution. Let's call them Mr. Granularity and Mr. Aggregation. Now Mr. Granularity is a fickle bastard as he always wants to split things into more fine grained buckets. Mr. Aggregation on the other hand is more kissable by nature. By that I'm refering to the Occam's razor version of kissable, meaning "Keep It Simple Sir" (KISS). 
+So it's apparent that we have three variables in this data set; the response
+variable $$y$$, and the covariates $$x$$ and $$z$$ ($$t$$ is just an indicator
+of a fake time). So the real model is just a linear model of the two variables.
+Now say that instead we want to go about solving this problem and we have two
+individuals arguing about the best solution. Let's call them Mr. Granularity and
+Mr. Aggregation. Now Mr. Granularity is a fickle bastard as he always wants to
+split things into more fine grained buckets. Mr. Aggregation on the other hand
+is more kissable by nature. By that I'm refering to the Occam's razor version of
+kissable, meaning "Keep It Simple Sir" (KISS). 
  
 This means that Mr. Granularity wants to estimate a parameter for each of the two variables while Mr. Aggregation wants to estimate one parameter for the sum of $$x$$ and $$z$$.
  
-# Mr. Granularity's solution
+## Mr. Granularity's solution
  
 So let's start out with the more complex solution. Mathematically Mr. Granularity defines the probabilistic model like this
  
@@ -90,9 +111,13 @@ which is implemented in Stan code below. There's nothing funky or noteworthy goi
  
 
  
-# Mr. Aggregation's solution
+## Mr. Aggregation's solution
  
-So remember that Mr. Aggregation was concerned about over-fitting and didn't want to split things up into the most granular pieces. As such, in his solution, we will add the two variables $$x$$ and $$z$$ together and quantify them as if they were one. The resulting model is given below followed by the implementation in Stan.
+So remember that Mr. Aggregation was concerned about over-fitting and didn't
+want to split things up into the most granular pieces. As such, in his solution,
+we will add the two variables $$x$$ and $$z$$ together and quantify them as if
+they were one. The resulting model is given below followed by the implementation
+in Stan.
  
 $$ \begin{align}
 y_t &\sim N(\mu_t, \sigma)\\
@@ -129,9 +154,13 @@ y_t &\sim N(\mu_t, \sigma)\\
  
 
  
-# Analysis
+## Analysis
  
-Now let's have a look at the different solutions and what we end up with. This problem was intentionally noise to confuse even the granular approach as much as possible. We'll start by inspecting the posteriors for the parameters of interest. They're shown below in these caterpillar plots where the parameters are on the y-axis and the posterior density is given on the x-axis.
+Now let's have a look at the different solutions and what we end up with. This
+problem was intentionally noise to confuse even the granular approach as much as
+possible. We'll start by inspecting the posteriors for the parameters of
+interest. They're shown below in these caterpillar plots where the parameters
+are on the y-axis and the posterior density is given on the x-axis.
  
 
  
@@ -194,12 +223,23 @@ x_t &\sim N(0, 1)\\
 z_t &\sim N(1, 1)\\
 \end{align} $$
  
-which in turn would make the $$x_t$$ variable nothing but noise. This can indeed be confirmed if you simulate many times. This is one of the core problems behind some models; identifiability. It's a tough thing and the very reason why maximum likelihood can not be used in general. You need to sample!
+which in turn would make the $$x_t$$ variable nothing but noise. This can indeed
+be confirmed if you simulate many times. This is one of the core problems behind
+some models; identifiability. It's a tough thing and the very reason why maximum
+likelihood can not be used in general. You need to sample!
  
  
-# Conclusion
+## Conclusion
  
-I've shown you today the dangers of aggregating information into a single unit and what those dangers are. There is a version of the strategy shown here which brings the best of both worlds; Hierarchical pooling. This methodology pulls data with low information content towards the mean of the other more highly informative ones. The degree of pooling can be readily expressed as a prior belief on how much the different subparts should be connected. As such; don't throw information away. If you believe they belong together, express that belief as a prior. Don't restrict your model to the same biases as you have! In summary:
+I've shown you today the dangers of aggregating information into a single unit
+and what those dangers are. There is a version of the strategy shown here which
+brings the best of both worlds; Hierarchical pooling. This methodology pulls
+data with low information content towards the mean of the other more highly
+informative ones. The degree of pooling can be readily expressed as a prior
+belief on how much the different subparts should be connected. As such; don't
+throw information away. If you believe they belong together, express that belief
+as a prior. Don't restrict your model to the same biases as you have! In
+summary:
  
 - Always add all the granularity you need to solve the problem
 - Don't be afraid of complexity; it's part of life

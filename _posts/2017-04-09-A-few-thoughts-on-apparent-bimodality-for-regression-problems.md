@@ -6,13 +6,12 @@ layout: post
 use_math: true
 ---
 
-
-
-
-# Motivation
-
-Did you ever run into a scenario when your data is showing two distinctive relationships but you're trying to solve for it with one regression line? This happens to me a lot. So I thought about having some fun with it intead of dreading it and the nasty consequences that may arise from this behaviour. Below you'll see a plot featuring two variables, $$x$$, and $$y$$ where we are tasked with figuring out how the value of $$y$$ depends on $$x$$.
-
+Did you ever run into a scenario when your data is showing two distinctive
+relationships but you're trying to solve for it with one regression line? This
+happens to me a lot. So I thought about having some fun with it intead of
+dreading it and the nasty consequences that may arise from this behaviour. Below
+you'll see a plot featuring two variables, $$x$$, and $$y$$ where we are tasked
+with figuring out how the value of $$y$$ depends on $$x$$.
 
 ```r
 mydf<-tibble(x=seq(0,30,0.2),
@@ -21,19 +20,33 @@ mydf<-tibble(x=seq(0,30,0.2),
 ggplot(mydf, aes(y=y, x=x)) + geom_point() + theme_minimal()
 ```
 
-
 ![plot of chunk problemplot](/images/figure/problemplot-1.png)
 
-Naturally, what comes to most peoples mind is that we need to model $$y_t=\omega f(x_t)+\epsilon$$ where $$f$$ and $$\omega$$ are currently unknown. The most straightforward solution to this is to assume that we are in a linear regime and consequently that $$f(x)=I(x)=x$$ where $$I$$ is the identity function. The equation then quickly becomes $$y_t=\omega x_t+\epsilon$$ at which time data scientists usually rejoice and apply linear regression. So let's do just that shall we.
+Naturally, what comes to most peoples mind is that we need to model $$y_t=\omega
+f(x_t)+\epsilon$$ where $$f$$ and $$\omega$$ are currently unknown. The most
+straightforward solution to this is to assume that we are in a linear regime and
+consequently that $$f(x)=I(x)=x$$ where $$I$$ is the identity function. The
+equation then quickly becomes $$y_t=\omega x_t+\epsilon$$ at which time data
+scientists usually rejoice and apply linear regression. So let's do just that
+shall we.
 
 ![plot of chunk unnamed-chunk-1](/images/figure/unnamed-chunk-1-1.png)
 
 
-Most of us would agree that the solution with the linear model to the left is not a very nice scenario. We're always off in terms of knowing the real expectation value. Conceptually this is not very difficult though. We humans do this all the time. If I show you another solution which looks like the one to the right then what would you say? Hopefully you would recognize this as something you would approve of. The problem with this is that a linear model cannot capture this. You need a transformation function to accomplish this.
+Most of us would agree that the solution with the linear model to the left is
+not a very nice scenario. We're always off in terms of knowing the real
+expectation value. Conceptually this is not very difficult though. We humans do
+this all the time. If I show you another solution which looks like the one to
+the right then what would you say? Hopefully you would recognize this as
+something you would approve of. The problem with this is that a linear model
+cannot capture this. You need a transformation function to accomplish this.
 
-
-
-But wait! We're all Bayesians here aren't we? So maybe we can capture this behavior by just letting our model support two modes for the slope parameter? As such we would never really know which slope cluster that would be chosen at any given time and naturally the expectation would end up between the both lines where the posterior probability is zero. Let's have a look at what the following model does when exposed to this data.
+But wait! We're all Bayesians here aren't we? So maybe we can capture this
+behavior by just letting our model support two modes for the slope parameter? As
+such we would never really know which slope cluster that would be chosen at any
+given time and naturally the expectation would end up between the both lines
+where the posterior probability is zero. Let's have a look at what the following
+model does when exposed to this data.
 
 $$ \begin{align}
 y_t &\sim \mathcal N(\mu_t, \sigma)\\
@@ -43,7 +56,11 @@ y_t &\sim \mathcal N(\mu_t, \sigma)\\
 \sigma &\sim \mathcal U(0.01, \inf)
 \end{align} $$
 
-Below you can see the plotted simulated regression lines from the model. Not great is it? Not only did our assumption of bimodality fall through but we're indeed no better of than before. Why? Well, in this case the mathematical formulation of the problem was just plain wrong. Depending on multimodality to cover up for your model specification sins is just bad practice.
+Below you can see the plotted simulated regression lines from the model. Not
+great is it? Not only did our assumption of bimodality fall through but we're
+indeed no better of than before. Why? Well, in this case the mathematical
+formulation of the problem was just plain wrong. Depending on multimodality to
+cover up for your model specification sins is just bad practice.
 
 ![plot of chunk prediction plot](/images/figure/prediction plot-1.png)
 

@@ -6,12 +6,14 @@ layout: post
 use_math: true
 ---
  
- 
-
- 
-# Motivation
- 
-Today we will run through an important concept in statistical learning theory and modeling in general. It may come as no surprise that my point is as usual "age quod agis". This is a lifelong strive for me to convey that message to fellow scientists and business people alike. Anyway, back to the topic. We will have a look at why the Bayesian treatment of models is fundamentally important to everyone and not only a select few mathematically inclined experts. The model we will use for this post is a time series model describing Milk sales over time. The model specification is 
+Today we will run through an important concept in statistical learning theory
+and modeling in general. It may come as no surprise that my point is as usual
+"age quod agis". This is a lifelong strive for me to convey that message to
+fellow scientists and business people alike. Anyway, back to the topic. We will
+have a look at why the Bayesian treatment of models is fundamentally important
+to everyone and not only a select few mathematically inclined experts. The model
+we will use for this post is a time series model describing Milk sales over
+time. The model specification is 
  
 $$\begin{align}
 y_t &\sim N(\mu_t, \sigma)\\
@@ -19,7 +21,10 @@ y_t &\sim N(\mu_t, \sigma)\\
 \sigma &\sim U(0.01, \inf) 
 \end{align}$$
  
-which is a standard linear model. The $$y_t$$ is the observed Milk sales units at time $$t$$ and the $$x_{t,i}$$ is the indicator variable for weekday $$i$$ at time $$t$$. As per usual $$\beta_0$$ serves as our intercept. A small sample of the data set looks like this  
+which is a standard linear model. The $$y_t$$ is the observed Milk sales units
+at time $$t$$ and the $$x_{t,i}$$ is the indicator variable for weekday $$i$$ at
+time $$t$$. As per usual $$\beta_0$$ serves as our intercept. A small sample of
+the data set looks like this  
  
 
 |    y| WDay1| WDay2| WDay3| WDay4| WDay5| WDay6| WDay7|
@@ -35,16 +40,23 @@ which, for the response variable $$y$$, looks like the distributional plot below
  
 ![plot of chunk problemplot](/images/figure/problemplot-1.png)
  
-For those of you wth modeling experience you will see that a mere intra-weekly seasonality will not be enough for capturing all the interesting parts of this particular series but for the point I'm trying to make it will work just fine sticking with seasonality + and intercept. 
+For those of you wth modeling experience you will see that a mere intra-weekly
+seasonality will not be enough for capturing all the interesting parts of this
+particular series but for the point I'm trying to make it will work just fine
+sticking with seasonality + and intercept. 
  
-# Estimating the parameters of the model
+## Estimating the parameters of the model
  
 We're going to estimate the parameters of this model by
  
 1. The full Bayesian treatment, i.e., we're going to estimate $$p(\beta\vert y, X)$$
 2. The Maximum likelihood, i.e., we're going to estimate $$p(y\vert \beta, X)$$ which in the tables and the plots will be referred to as "Freq" from the term "Frequentist" which I inherently dislike but I made the tables and plots a while ago so bear with me.
  
-If you rememeber your probability theory training you know that $$p(\beta\vert y, X) \neq p(y\vert \beta, X)$$. Sure but so what? Well, this matters a lot. In order to see why let's dig into these terms. First off, let's have a look at the proper full Bayesian treatment. We can express that posterior distribution using three terms, namely the
+If you rememeber your probability theory training you know that $$p(\beta\vert
+y, X) \neq p(y\vert \beta, X)$$. Sure but so what? Well, this matters a lot. In
+order to see why let's dig into these terms. First off, let's have a look at the
+proper full Bayesian treatment. We can express that posterior distribution using
+three terms, namely the
  
 1. **Likelihood**, 
 2. the **Prior** and
@@ -52,19 +64,51 @@ If you rememeber your probability theory training you know that $$p(\beta\vert y
  
 $$p(\beta\vert y, X)=\frac{p(y\vert \beta, X)p(\beta\vert X)}{\int p(y,\beta, X) d\beta}$$
  
-The Evidence is the denominator and serves as a normalization factor that allows us to talk about probabilities in the first place. The nominator consists of two terms; the Likelihood (to the left), and the prior (to the right). It's worth noticing here that the prior for $$\beta$$ may very well depend on the covariates as such, and even on the response variable should we wish to venture into emperical priors. Explained in plain words the equation above states that we wish to estimate the posterior probability of our parameters $$\beta$$ by weigting our prior knowledge and assumptions about those parameters with the plausability of them generating a data set like ours, normalized by the plausability of the data itself under the existing mathematical model. Now doesn't that sound reasonable? I think it does.
+The Evidence is the denominator and serves as a normalization factor that allows
+us to talk about probabilities in the first place. The nominator consists of two
+terms; the Likelihood (to the left), and the prior (to the right). It's worth
+noticing here that the prior for $$\beta$$ may very well depend on the
+covariates as such, and even on the response variable should we wish to venture
+into emperical priors. Explained in plain words the equation above states that
+we wish to estimate the posterior probability of our parameters $$\beta$$ by
+weigting our prior knowledge and assumptions about those parameters with the
+plausability of them generating a data set like ours, normalized by the
+plausability of the data itself under the existing mathematical model. Now
+doesn't that sound reasonable? I think it does.
  
-Now if we look into the same kind of analysis for what the Maximum Likelihood method does we find the following equation
+Now if we look into the same kind of analysis for what the Maximum Likelihood
+method does we find the following equation
  
 $$p(y\vert \beta, X)=\frac{p(\beta\vert y, X)}{p(\beta\vert X)}\int p(y,\beta, X) d\beta$$
  
-which states that the probability of observing a data set like ours given fixed $$\beta$$'s is the posterior probability of the $$\beta$$'s divided by our prior assumptions scaled by the total plausability of the data itself. Now this also sounds reasonable, and it is. The only problem is that the quantity on the left hand side is not sampled; it is maximized in Maximum Likelihood. Hence the name.. On top of that what you do in 99% of all cases is ignore the right hand side in the equation above and just postulate that $$p(y\vert \beta,X)=\mathcal{N}(\mu,\sigma)$$ which is a rather rough statement to begin with, but let's not dive into that right now. So when you maximize this expression, what are you actually doing? Tadam! You're doing data fitting. This might seem like a good thing but it's not. Basically you're generating every conceivable hypothesis known to the model at hand and picking the one that happens to coincide the best with your, in most cases, tiny dataset. That's not even the worst part; The worst part is that you won't even, once the fitting is done, be able to express yourself about the uncertainty of the parameters of your model!
+which states that the probability of observing a data set like ours given fixed
+$$\beta$$'s is the posterior probability of the $$\beta$$'s divided by our prior
+assumptions scaled by the total plausability of the data itself. Now this also
+sounds reasonable, and it is. The only problem is that the quantity on the left
+hand side is not sampled; it is maximized in Maximum Likelihood. Hence the
+name.. On top of that what you do in 99% of all cases is ignore the right hand
+side in the equation above and just postulate that $$p(y\vert
+\beta,X)=\mathcal{N}(\mu,\sigma)$$ which is a rather rough statement to begin
+with, but let's not dive into that right now. So when you maximize this
+expression, what are you actually doing? Tadam! You're doing data fitting. This
+might seem like a good thing but it's not. Basically you're generating every
+conceivable hypothesis known to the model at hand and picking the one that
+happens to coincide the best with your, in most cases, tiny dataset. That's not
+even the worst part; The worst part is that you won't even, once the fitting is
+done, be able to express yourself about the uncertainty of the parameters of
+your model!
  
-Now that we have skimmed through the surface of the math behind the two methodologies we're ready to look at some results and do the real analysis. 
+Now that we have skimmed through the surface of the math behind the two
+methodologies we're ready to look at some results and do the real analysis. 
  
 ## Technical setup
  
-The Bayesian approach is estimated using the probabalistic programming language [**Stan**](http://mc-stan.org/) following the model described in the beginning, i.e., we have completely uninformed priors. This is to make it as similar to the Maximum Likelihood method as possible. The Maximum Likelihood method is implemented using the *lm* function in [**R**](https://www.R-project.org/). Thus, in R we're simply doing
+The Bayesian approach is estimated using the probabalistic programming language
+[**Stan**](http://mc-stan.org/) following the model described in the beginning,
+i.e., we have completely uninformed priors. This is to make it as similar to the
+Maximum Likelihood method as possible. The Maximum Likelihood method is
+implemented using the *lm* function in [**R**](https://www.R-project.org/).
+Thus, in R we're simply doing
  
 
     mylm <- lm(y~WDay1+WDay2+WDay3+WDay4+WDay5+WDay6+WDay7, data=ourdata)

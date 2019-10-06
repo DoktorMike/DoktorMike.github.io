@@ -2,15 +2,9 @@
 title: "Doing price optimization in R"
 author: "Dr. Michael Green"
 date: "May 6, 2016"
-output: html_document
 layout: post
-published: true
-status: publish
 use_math: true
 ---
- 
-
- 
  
 As many of us already know R is an extremely useful and powerful language for designing, building and evaluating statistical models. In this example I'm going to use R for calculating the optimal price for a product given very few inputs.
  

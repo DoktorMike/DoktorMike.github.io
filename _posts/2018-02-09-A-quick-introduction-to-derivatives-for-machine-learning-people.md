@@ -6,8 +6,6 @@ layout: post
 categories: math derivatives machine learning ai ml
 ---
 
-## Introduction
-
 If you're like me you probably have used derivatives for a huge part of your
 life and learned a few rules on how they work and behave without actually
 understanding where it all comes from. As kids we learn some of these rules

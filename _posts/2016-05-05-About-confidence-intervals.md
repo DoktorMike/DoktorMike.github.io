@@ -2,17 +2,9 @@
 title: "About confidence intervals"
 author: "Dr. Michael Green"
 date: "May 5, 2016"
-output: html_document
 layout: post
-published: true
-status: publish
 use_math: true
 ---
- 
- 
-
- 
-# Introduction
  
 Confidence intervals are as beautiful as they are deceiving. They're part of an
 elegant theory of mathematical statistics which has been abused since the dawn

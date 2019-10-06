@@ -2,13 +2,9 @@
 title: "Implementing predictive sales modeling"
 author: "Dr. Michael Green"
 date: "May 18, 2016"
-output: html_document
 layout: post
-published: true
-status: publish
 use_math: true
 ---
-
 
 *S*ales modeling has long been used by clients and media
 agencies around the world to create insights regarding their historical

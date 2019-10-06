@@ -6,11 +6,6 @@ layout: post
 use_math: true
 ---
 
-
-
-
-# Motivation
-
 There's a new kid on the inference block called "Edward" who is full of potential and promises of merging probabilistic programming, computational graphs and inference! There's also talk of a 35 times speed up compared to our good old reliable fellow "Stan". Today I will run some comparisons for problems that currently interest me namely time series with structural hyperparameters.
 
 To start things off and make sure we have all our ducks in a row for running edward we need to install it using the python installer called pip which is available in most linux distros. I will use pip3 here because I use python3 instead of python2. It shouldn't matter which one you choose though. So go ahead and install "Edward".

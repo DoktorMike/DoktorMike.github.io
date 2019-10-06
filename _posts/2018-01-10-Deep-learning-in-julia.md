@@ -6,20 +6,27 @@ layout: post
 use_math: true
 ---
 
-
-
-# Motivation
-
-I love new initiatives that tries to do something fresh and innovative. The relatively new language [Julia](https://julialang.org/) is one of my favorite languages. It features a lot of good stuff in addition to being targeted towards computational people like me. I won't bore you with the details of the language itself but suffice it to say that we finally have a general purpose language where you don't have to compromise expressiveness with efficiency.
-
+I love new initiatives that tries to do something fresh and innovative. The
+relatively new language [Julia](https://julialang.org/) is one of my favorite
+languages. It features a lot of good stuff in addition to being targeted towards
+computational people like me. I won't bore you with the details of the language
+itself but suffice it to say that we finally have a general purpose language
+where you don't have to compromise expressiveness with efficiency.
 
 ## Prerequisites
 
-When reading this it helps if you have a basic understanding of Neural networks and their mathematical properties. Mathwise, basic linear algebra will do for the majority of the post.
+When reading this it helps if you have a basic understanding of Neural networks
+and their mathematical properties. Mathwise, basic linear algebra will do for
+the majority of the post.
 
-# Short introductory example - Boston Housing
+## Short introductory example - Boston Housing
 
-Instead of writing on and on about how cool this new language is I will just show you how quickly you can get a simple neural network up and running. The first example we will create is the [BostonHousing](http://www.cs.toronto.edu/~delve/data/boston/bostonDetail.html) dataset. This is baked into the deep learning library Knet. So let's start by fetching the data.
+Instead of writing on and on about how cool this new language is I will just
+show you how quickly you can get a simple neural network up and running. The
+first example we will create is the
+[BostonHousing](http://www.cs.toronto.edu/~delve/data/boston/bostonDetail.html)
+dataset. This is baked into the deep learning library Knet. So let's start by
+fetching the data.
 
 ```julia
 using Knet;
@@ -27,7 +34,12 @@ include(Knet.dir("data","housing.jl"));
 x,y = housing();
 ```
 
-Now that we have the data we also need to define the basic functions that will make up our network. We will start with the predict function where we define $$\omega$$ and $$x$$ as input. $$\omega$$ in this case is our parameters which is a 2 element array containing weights in the first element and biases in the second. The $$x$$ contains the dataset which in our case is a matrix of size 506x13, i.e., 506 observations and 13 covariates.
+Now that we have the data we also need to define the basic functions that will
+make up our network. We will start with the predict function where we define
+$$\omega$$ and $$x$$ as input. $$\omega$$ in this case is our parameters which
+is a 2 element array containing weights in the first element and biases in the
+second. The $$x$$ contains the dataset which in our case is a matrix of size
+506x13, i.e., 506 observations and 13 covariates.
 
 ```julia
 predict(ω, x) = ω[1] * x .+ ω[2];
@@ -48,7 +60,11 @@ end;
 
 
 
-Let's have a look at the first 5 variables of the data set and their relation to the response that we would like to predict. The y axis in the plots is the response variable and the x axis the respective variables values. As you can see there are some correlations which seems to indicate some kind of relation though this is not definitive proof of a relation!
+Let's have a look at the first 5 variables of the data set and their relation to
+the response that we would like to predict. The y axis in the plots is the
+response variable and the x axis the respective variables values. As you can see
+there are some correlations which seems to indicate some kind of relation though
+this is not definitive proof of a relation!
 
 ```julia
 using Plots;
@@ -148,7 +164,13 @@ which will have way more parameters than needed to solve this, but we'll add all
 
 
 
-The $$\omega$$ is not the only thing we need to fix. We also need a new prediction function. Now, instead of making it targeted towards our specific network, we will instead write one that works for any number of layers. It's given below. Notice the ReLu function in the hidden nodes. If you don't know why this is a good idea there are several papers that explains why in great detail. The short version is that it helps with the vanishing gradients problem in deep networks.
+The $$\omega$$ is not the only thing we need to fix. We also need a new
+prediction function. Now, instead of making it targeted towards our specific
+network, we will instead write one that works for any number of layers. It's
+given below. Notice the ReLu function in the hidden nodes. If you don't know why
+this is a good idea there are several papers that explains why in great detail.
+The short version is that it helps with the vanishing gradients problem in deep
+networks.
 
 ```julia
 function predict(ω, x) 
@@ -168,7 +190,11 @@ predict (generic function with 1 method)
 
 
 
-Regarding the loss and the gradient of the loss we use exactly the same code! No need for any changes. This is one of the AutoGrad's superpowers; It can differentiate almost any Julia function. The same is also true for our training function. It also doesn't change. Nor do the loop where we apply it. Cool stuff my friends. 
+Regarding the loss and the gradient of the loss we use exactly the same code! No
+need for any changes. This is one of the AutoGrad's superpowers; It can
+differentiate almost any Julia function. The same is also true for our training
+function. It also doesn't change. Nor do the loop where we apply it. Cool stuff
+my friends. 
 
 ```julia
 loss(ω, x, y) = mean(abs2, predict(ω, x)-y)
@@ -189,7 +215,9 @@ end
 
 
 
-Let's then have a look at the naive performance shall we? We start out by showing the same plots as we did for the linear model. It might not be super obvious what happened, but the error went down by a lot.
+Let's then have a look at the naive performance shall we? We start out by
+showing the same plots as we did for the linear model. It might not be super
+obvious what happened, but the error went down by a lot.
 
 ```julia
 p3 = scatter(errdf[:,:Epoch], errdf[:,:Error], xlabel="Epoch", ylabel="Error")
@@ -201,7 +229,10 @@ plot(p3, p4, layout=(1,2), size=(950,500))
 ![](/images/figure/docbostonhousing_10_1.svg)
 
 
-But the interesting comparison is of course how much better the fit really was. We can show the correlation plots from both models next to each other. The correlation for the first model was [0.85] while for our latest version it was [0.98].
+But the interesting comparison is of course how much better the fit really was.
+We can show the correlation plots from both models next to each other. The
+correlation for the first model was [0.85] while for our latest version it was
+[0.98].
 
 ```julia
 plot(p2, p4, layout=(1,2), size=(950,500))
@@ -211,7 +242,10 @@ plot(p2, p4, layout=(1,2), size=(950,500))
 ![](/images/figure/docbostonhousing_11_1.svg)
 
 
-As the complexity is probably high enough it makes sense to check if it's too flexible and have a validation run duing our fitting process. This is usually rather instructive when dealing with highly parameterized functions. We start by splitting our data set up in training and testing. 
+As the complexity is probably high enough it makes sense to check if it's too
+flexible and have a validation run duing our fitting process. This is usually
+rather instructive when dealing with highly parameterized functions. We start by
+splitting our data set up in training and testing. 
 
 ```julia
 xtrn, xtst = x[:, 1:400], x[:, 401:end]

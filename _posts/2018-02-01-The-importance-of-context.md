@@ -6,15 +6,7 @@ layout: post
 use_math: true
 ---
  
- 
-
- 
- 
-# Motivation
- 
 When we do modeling it's of utmost importance that we pay attention to context. Without context there is little that can be inferred. 
- 
-
  
 Let's create a correlated dummy dataset that will allow me to highlight my point. In this case we'll just sample our data from a two dimensional multivariate gaussian distribution specified by the mean vector $$\mu_X$$ and covariance matrix $$\Sigma_X$$. We will also create a response variable $$y$$ which is defined like
  
