@@ -2,10 +2,7 @@
 title : Deep Neural Networks in Julia - Love at first sight?
 author : Michael Green
 date : January 10, 2018
-output: html_document
 layout: post
-published: true
-status: publish
 use_math: true
 ---
 
@@ -30,7 +27,7 @@ include(Knet.dir("data","housing.jl"));
 x,y = housing();
 ```
 
-Now that we have the data we also need to define the basic functions that will make up our network. We will start with the predict function where we define $\omega$ and $x$ as input. $\omega$ in this case is our parameters which is a 2 element array containing weights in the first element and biases in the second. The $x$ contains the dataset which in our case is a matrix of size 506x13, i.e., 506 observations and 13 covariates.
+Now that we have the data we also need to define the basic functions that will make up our network. We will start with the predict function where we define $$\omega$$ and $$x$$ as input. $$\omega$$ in this case is our parameters which is a 2 element array containing weights in the first element and biases in the second. The $$x$$ contains the dataset which in our case is a matrix of size 506x13, i.e., 506 observations and 13 covariates.
 
 ```julia
 predict(ω, x) = ω[1] * x .+ ω[2];
@@ -140,7 +137,7 @@ Now that that's out of the way the next thing we need to do is to define the wei
 - A hidden layer of size 64
 - Another hidden layer of size 15
 - A final output layer which will be our prediction
-which will have way more parameters than needed to solve this, but we'll add all these parameters just for fun. We'll return to why this is a horrible idea later. Knowing the overall structure we can now define our new $\omega$. When you read it please bear in mind that we use a [weights,bias,weights,bias] structure.
+which will have way more parameters than needed to solve this, but we'll add all these parameters just for fun. We'll return to why this is a horrible idea later. Knowing the overall structure we can now define our new $$\omega$$. When you read it please bear in mind that we use a [weights,bias,weights,bias] structure.
 
 ```julia
 ω = Any[0.1f0*randn(Float32,64,13), zeros(Float32,64,1),
@@ -151,7 +148,7 @@ which will have way more parameters than needed to solve this, but we'll add all
 
 
 
-The $\omega$ is not the only thing we need to fix. We also need a new prediction function. Now, instead of making it targeted towards our specific network, we will instead write one that works for any number of layers. It's given below. Notice the ReLu function in the hidden nodes. If you don't know why this is a good idea there are several papers that explains why in great detail. The short version is that it helps with the vanishing gradients problem in deep networks.
+The $$\omega$$ is not the only thing we need to fix. We also need a new prediction function. Now, instead of making it targeted towards our specific network, we will instead write one that works for any number of layers. It's given below. Notice the ReLu function in the hidden nodes. If you don't know why this is a good idea there are several papers that explains why in great detail. The short version is that it helps with the vanishing gradients problem in deep networks.
 
 ```julia
 function predict(ω, x) 

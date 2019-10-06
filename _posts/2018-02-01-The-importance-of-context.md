@@ -2,10 +2,7 @@
 title: "The importance of context"
 author: "Dr. Michael Green"
 date: "2018-02-01"
-output: html_document
 layout: post
-published: true
-status: publish
 use_math: true
 ---
  
@@ -19,7 +16,7 @@ When we do modeling it's of utmost importance that we pay attention to context. 
  
 
  
-Let's create a correlated dummy dataset that will allow me to highlight my point. In this case we'll just sample our data from a two dimensional multivariate gaussian distribution specified by the mean vector $\mu_X$ and covariance matrix $\Sigma_X$. We will also create a response variable $y$ which is defined like
+Let's create a correlated dummy dataset that will allow me to highlight my point. In this case we'll just sample our data from a two dimensional multivariate gaussian distribution specified by the mean vector $$\mu_X$$ and covariance matrix $$\Sigma_X$$. We will also create a response variable $$y$$ which is defined like
  
 $$y_t\sim N(\mu_{y,t}, \sigma_y)$$
  
@@ -27,7 +24,7 @@ $$\mu_{y,t}=1x_1+1x_2+1x_1 x_2+5$$
  
 $$\sigma_y\sim N(0,20)$$
  
-where $x_1$ and $x_2$ are realized samples from the two dimensional multivariate guassian distribution above. This covariance matrix looks like this
+where $$x_1$$ and $$x_2$$ are realized samples from the two dimensional multivariate guassian distribution above. This covariance matrix looks like this
  
 
 |   |  X1|  X2|
@@ -49,7 +46,7 @@ gather(mydf, variable, value, -y) %>%
 
 ![plot of chunk dataplotforvariables](/images/figure/dataplotforvariables-1.png)
  
-What would you expect us to get from it if we fit a simple model? We have generated 500 observations and we are estimating 4 coefficients. Should be fine right? Well it turns out it's not fine at all. Not fine at all. Remember that we defined our coefficients to be 1 both for the independent effects and for the interaction effects between $x_1$ and $x_2$. The intercept is set to $5$. In other words we actually have point parameters here behind the physical model. This is an assumption that in most modeling situations would be crazy, but we use it here to highlight a point. Let's make a linear regression model with the interaction effects present.
+What would you expect us to get from it if we fit a simple model? We have generated 500 observations and we are estimating 4 coefficients. Should be fine right? Well it turns out it's not fine at all. Not fine at all. Remember that we defined our coefficients to be 1 both for the independent effects and for the interaction effects between $$x_1$$ and $$x_2$$. The intercept is set to $$5$$. In other words we actually have point parameters here behind the physical model. This is an assumption that in most modeling situations would be crazy, but we use it here to highlight a point. Let's make a linear regression model with the interaction effects present.
  
 
     mylm <- lm(y~X1+X2+X1:X2, data=mydf)
@@ -115,9 +112,9 @@ In R you specify interaction effects like this ":" which might look a bit weird 
 </table>
  
  
-A quick look at the table reveals a number of pathologies. If we look at the intercept we can see that it's 198 per cent off. For the $x_1$ and $x_2$ variables we're -94 and -87 per cent off respectively. The interaction effect ends up being 9 percent off target which is not much. All in all though, we're significantly off the target. This is not surprising though. In fact, I would have been surprised had we succeeded. So what's the problem? Well, the problem is that our basic assumption of independence between variables quite frankly does not hold. The reason why it doesn't hold is because the generated data is indeed correlated. Remember our covariance matrix in the two dimensional multivariate gaussian. 
+A quick look at the table reveals a number of pathologies. If we look at the intercept we can see that it's 198 per cent off. For the $$x_1$$ and $$x_2$$ variables we're -94 and -87 per cent off respectively. The interaction effect ends up being 9 percent off target which is not much. All in all though, we're significantly off the target. This is not surprising though. In fact, I would have been surprised had we succeeded. So what's the problem? Well, the problem is that our basic assumption of independence between variables quite frankly does not hold. The reason why it doesn't hold is because the generated data is indeed correlated. Remember our covariance matrix in the two dimensional multivariate gaussian. 
  
-Let's try to fix our analysis. In this setting we need to introduce context and the easiest most natural way to deal with that are priors. To do this we cannot use our old trusted friend "lm" in R but must resort to a bayesian framework. [Stan](http://mc-stan.org) makes that very simple. This implementation of our model is not very elegant but it will neatly show you how easily you can define models in this language. We simply specify our data, parameters and model. We set the priors in the model part. Notice here that we don't put priors on everything. For instance. I might know that a value around 1 is reasonable for our main and interaction effects but I have no idea of where the intercept should be. In this case I will simple be completely ignorant and not inject my knowledge into the model about the intercept because I fundamentally believe I don't have any. That's why $\beta_0$ does not appear in the model section. 
+Let's try to fix our analysis. In this setting we need to introduce context and the easiest most natural way to deal with that are priors. To do this we cannot use our old trusted friend "lm" in R but must resort to a bayesian framework. [Stan](http://mc-stan.org) makes that very simple. This implementation of our model is not very elegant but it will neatly show you how easily you can define models in this language. We simply specify our data, parameters and model. We set the priors in the model part. Notice here that we don't put priors on everything. For instance. I might know that a value around 1 is reasonable for our main and interaction effects but I have no idea of where the intercept should be. In this case I will simple be completely ignorant and not inject my knowledge into the model about the intercept because I fundamentally believe I don't have any. That's why $$\beta_0$$ does not appear in the model section. 
  
 
     data {

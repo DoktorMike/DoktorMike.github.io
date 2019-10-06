@@ -2,10 +2,7 @@
 title: "The insignificance of significance"
 author: "Dr. Michael Green"
 date: "June 15, 2016"
-output: html_document
 layout: post
-published: true
-status: publish
 use_math: true
 ---
  

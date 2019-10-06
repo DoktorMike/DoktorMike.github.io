@@ -40,15 +40,15 @@ and therefor
 $$p(\beta\vert y, X)=\frac{p(y\vert \beta, X)p(\beta)}{p(y)}$$
  
  
-which is just a derivation of Baye's rule. Now we actually have something a bit more useful at our hands which is ready to be interpreted and implemented. What do I mean by implemented? Seems like an odd thing to say about probability distributions right? As weird as it may seem we actually haven't given the probability distributions a concise mathematical representation. This is of course necessary for any kind of inference. So let's get to it. The first term I would like to describe is the likelihood i.e. the $p(y\vert \beta, X)$ which describes the likelihood of observing the data given the covariance matrix $X$ and a set of parameters $\beta$. For simplicity let's say this probability distribution is gaussian thus taking the following form $p(y\vert \beta, X)=\mathcal{N}(y-\beta X; 0, \sigma)$. This corresponds to setting up a measurement model $y_t = \beta x_t + \epsilon$ where $\epsilon=\mathcal{N}(0, \sigma)$.
+which is just a derivation of Baye's rule. Now we actually have something a bit more useful at our hands which is ready to be interpreted and implemented. What do I mean by implemented? Seems like an odd thing to say about probability distributions right? As weird as it may seem we actually haven't given the probability distributions a concise mathematical representation. This is of course necessary for any kind of inference. So let's get to it. The first term I would like to describe is the likelihood i.e. the $$p(y\vert \beta, X)$$ which describes the likelihood of observing the data given the covariance matrix $$X$$ and a set of parameters $$\beta$$. For simplicity let's say this probability distribution is gaussian thus taking the following form $$p(y\vert \beta, X)=\mathcal{N}(y-\beta X; 0, \sigma)$$. This corresponds to setting up a measurement model $$y_t = \beta x_t + \epsilon$$ where $$\epsilon=\mathcal{N}(0, \sigma)$$.
  
-The second term in the nominator on the right hand side is our prior $p(\beta)$ which we will also consider gaussian. Thus, we will set $p(\beta)=\mathcal{N}(0, \alpha I)$ indicating that the parameters are independant from each other and most likely centered around $0$ with a known standard deviation of $\alpha$. The last term is the denominator $p(y)$ which in this setting functions as the evidence. This is also the normalizing constant that makes sure that we can interpret the right hand side probabilistically.
+The second term in the nominator on the right hand side is our prior $$p(\beta)$$ which we will also consider gaussian. Thus, we will set $$p(\beta)=\mathcal{N}(0, \alpha I)$$ indicating that the parameters are independant from each other and most likely centered around $$0$$ with a known standard deviation of $$\alpha$$. The last term is the denominator $$p(y)$$ which in this setting functions as the evidence. This is also the normalizing constant that makes sure that we can interpret the right hand side probabilistically.
  
 That's it! We now have the pieces we need to push the inference button. This is often for more complicated models done by utilizing Markov Chain Monte Carlo methods to sample the distributions. If we are not interested in the distribution but only the average estimates for the parameters we can just turn this into an optimization problem instead by realizing that 
  
 $$p(\beta\vert y, X)=\frac{p(y\vert \beta, X)p(\beta)}{p(y)}\propto p(y\vert \beta, X)p(\beta)$$
  
-since $p(y)$ just functions as a normalizing constant and doesn't change the location of the $\beta$ that would yield the maximum probability. Thus we can set up the optimization problem as
+since $$p(y)$$ just functions as a normalizing constant and doesn't change the location of the $$\beta$$ that would yield the maximum probability. Thus we can set up the optimization problem as
  
 $$\mathcal{L}(\beta)=\prod_{t=1}^T \mathcal{N}(y_t-\beta x_t; 0, \sigma)\mathcal{N}(\beta; 0, \alpha I)$$
  
@@ -56,7 +56,7 @@ and maximize this function. Normally when we solve optimization problems it's ea
  
 $$-\ln \mathcal{L}(\beta)=-\sum_{t=1}^T \ln \mathcal{N}(y_t-\beta x_t; 0, \sigma)- \ln\mathcal{N}(\beta; 0, \alpha I)$$
  
-as opposed to the equation before. For the sake of clarity let's assume from now on that we only have one independent variable and only one parameter $\beta$. Since we know that 
+as opposed to the equation before. For the sake of clarity let's assume from now on that we only have one independent variable and only one parameter $$\beta$$. Since we know that 
  
 $$\mathcal{N}(x;\mu, \sigma)=\frac{1}{\sqrt{2\pi\sigma^2}}\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)$$
  
@@ -68,7 +68,7 @@ which can be more nicely written as
  
 $$-\ln \mathcal{L}(\beta)=\sum_{t=1}^T\frac{\left(y_t-\beta x_t\right)^2}{2\sigma^2} + \frac{\beta^2}{2\alpha^2} + C$$
  
-where $C=TC_1 - C_2$. As such putting a Gaussian prior on your $\beta$ is equivalent penalizing solutions that differ from $0$ by a factor of $1/(2\alpha^2)$ i.e. 1 divided by two times the variance of the Gaussian. Thus, the smaller the variance, the higher our prior confidence is that the solution should be close to zero. The larger the variance the more uncertain we are about where the solution should end up.
+where $$C=TC_1 - C_2$$. As such putting a Gaussian prior on your $$\beta$$ is equivalent penalizing solutions that differ from $$0$$ by a factor of $$1/(2\alpha^2)$$ i.e. 1 divided by two times the variance of the Gaussian. Thus, the smaller the variance, the higher our prior confidence is that the solution should be close to zero. The larger the variance the more uncertain we are about where the solution should end up.
  
 # Ridge regression
  
@@ -80,7 +80,7 @@ where the variables and parameters have the same interpretation as before. This 
  
 $$\Vert X\beta-y\Vert^2+\Vert \Gamma\beta\Vert^2$$
  
-where $\Gamma$ is typically chosen to be $\gamma I$. This means that all values in the parameter vector $\beta$ should be close to 0. Continuing along this track we can select a dumbed down version of this equation to show what's going on for a simple application of one variable $x$ and one parameter $\beta$. In this case
+where $$\Gamma$$ is typically chosen to be $$\gamma I$$. This means that all values in the parameter vector $$\beta$$ should be close to 0. Continuing along this track we can select a dumbed down version of this equation to show what's going on for a simple application of one variable $$x$$ and one parameter $$\beta$$. In this case
  
 $$\Vert X\beta-y\Vert^2+\Vert \gamma I\beta\Vert^2$$
  
@@ -92,9 +92,9 @@ which you may recognize from before. Not convinced? Well let's look into the dif
  
 Probabilistic formulation | Ridge regression
 -------------- | ----------------
-$\sum_{t=1}^T\frac{\left(y_t-\beta x_t\right)^2}{2\sigma^2} + \frac{\beta^2}{2\alpha^2} + C$   | $\sum_{t=1}^T(y_t-\beta x_t)^2+\gamma^2\beta^2$
+$$\sum_{t=1}^T\frac{\left(y_t-\beta x_t\right)^2}{2\sigma^2} + \frac{\beta^2}{2\alpha^2} + C$$   | $$\sum_{t=1}^T(y_t-\beta x_t)^2+\gamma^2\beta^2$$
  
-Here it's pretty obvious to see that they are equivalent. The constant $C$ plays no role in the minimization of these expressions. Neither does the denominator $2\sigma^2$. Thus if we set $\lambda=\gamma^2=1/(2\alpha^2)$ the equivalence is clear and we see that what we are really minimizing is 
+Here it's pretty obvious to see that they are equivalent. The constant $$C$$ plays no role in the minimization of these expressions. Neither does the denominator $$2\sigma^2$$. Thus if we set $$\lambda=\gamma^2=1/(2\alpha^2)$$ the equivalence is clear and we see that what we are really minimizing is 
  
 $$\sum_{t=1}^T(y_t-\beta x_t)^2+\lambda\beta^2$$
  

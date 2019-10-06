@@ -2,10 +2,7 @@
 title: "On the apparent success of the maximum likelihood principle"
 author: "Dr. Michael Green"
 date: "Jul 28, 2017"
-output: html_document
 layout: post
-published: true
-status: publish
 use_math: true
 ---
  
@@ -22,7 +19,7 @@ y_t &\sim N(\mu_t, \sigma)\\
 \sigma &\sim U(0.01, \inf) 
 \end{align}$$
  
-which is a standard linear model. The $y_t$ is the observed Milk sales units at time $t$ and the $x_{t,i}$ is the indicator variable for weekday $i$ at time $t$. As per usual $\beta_0$ serves as our intercept. A small sample of the data set looks like this  
+which is a standard linear model. The $$y_t$$ is the observed Milk sales units at time $$t$$ and the $$x_{t,i}$$ is the indicator variable for weekday $$i$$ at time $$t$$. As per usual $$\beta_0$$ serves as our intercept. A small sample of the data set looks like this  
  
 
 |    y| WDay1| WDay2| WDay3| WDay4| WDay5| WDay6| WDay7|
@@ -34,7 +31,7 @@ which is a standard linear model. The $y_t$ is the observed Milk sales units at 
 | 8428|     0|     0|     0|     0|     0|     0|     1|
 | 6725|     1|     0|     0|     0|     0|     0|     0|
  
-which, for the response variable $y$, looks like the distributional plot below.
+which, for the response variable $$y$$, looks like the distributional plot below.
  
 ![plot of chunk problemplot](/images/figure/problemplot-1.png)
  
@@ -44,10 +41,10 @@ For those of you wth modeling experience you will see that a mere intra-weekly s
  
 We're going to estimate the parameters of this model by
  
-1. The full Bayesian treatment, i.e., we're going to estimate $p(\beta\vert y, X)$
-2. The Maximum likelihood, i.e., we're going to estimate $p(y\vert \beta, X)$ which in the tables and the plots will be referred to as "Freq" from the term "Frequentist" which I inherently dislike but I made the tables and plots a while ago so bear with me.
+1. The full Bayesian treatment, i.e., we're going to estimate $$p(\beta\vert y, X)$$
+2. The Maximum likelihood, i.e., we're going to estimate $$p(y\vert \beta, X)$$ which in the tables and the plots will be referred to as "Freq" from the term "Frequentist" which I inherently dislike but I made the tables and plots a while ago so bear with me.
  
-If you rememeber your probability theory training you know that $p(\beta\vert y, X) \neq p(y\vert \beta, X)$. Sure but so what? Well, this matters a lot. In order to see why let's dig into these terms. First off, let's have a look at the proper full Bayesian treatment. We can express that posterior distribution using three terms, namely the
+If you rememeber your probability theory training you know that $$p(\beta\vert y, X) \neq p(y\vert \beta, X)$$. Sure but so what? Well, this matters a lot. In order to see why let's dig into these terms. First off, let's have a look at the proper full Bayesian treatment. We can express that posterior distribution using three terms, namely the
  
 1. **Likelihood**, 
 2. the **Prior** and
@@ -55,13 +52,13 @@ If you rememeber your probability theory training you know that $p(\beta\vert y,
  
 $$p(\beta\vert y, X)=\frac{p(y\vert \beta, X)p(\beta\vert X)}{\int p(y,\beta, X) d\beta}$$
  
-The Evidence is the denominator and serves as a normalization factor that allows us to talk about probabilities in the first place. The nominator consists of two terms; the Likelihood (to the left), and the prior (to the right). It's worth noticing here that the prior for $\beta$ may very well depend on the covariates as such, and even on the response variable should we wish to venture into emperical priors. Explained in plain words the equation above states that we wish to estimate the posterior probability of our parameters $\beta$ by weigting our prior knowledge and assumptions about those parameters with the plausability of them generating a data set like ours, normalized by the plausability of the data itself under the existing mathematical model. Now doesn't that sound reasonable? I think it does.
+The Evidence is the denominator and serves as a normalization factor that allows us to talk about probabilities in the first place. The nominator consists of two terms; the Likelihood (to the left), and the prior (to the right). It's worth noticing here that the prior for $$\beta$$ may very well depend on the covariates as such, and even on the response variable should we wish to venture into emperical priors. Explained in plain words the equation above states that we wish to estimate the posterior probability of our parameters $$\beta$$ by weigting our prior knowledge and assumptions about those parameters with the plausability of them generating a data set like ours, normalized by the plausability of the data itself under the existing mathematical model. Now doesn't that sound reasonable? I think it does.
  
 Now if we look into the same kind of analysis for what the Maximum Likelihood method does we find the following equation
  
 $$p(y\vert \beta, X)=\frac{p(\beta\vert y, X)}{p(\beta\vert X)}\int p(y,\beta, X) d\beta$$
  
-which states that the probability of observing a data set like ours given fixed $\beta$'s is the posterior probability of the $\beta$'s divided by our prior assumptions scaled by the total plausability of the data itself. Now this also sounds reasonable, and it is. The only problem is that the quantity on the left hand side is not sampled; it is maximized in Maximum Likelihood. Hence the name.. On top of that what you do in 99% of all cases is ignore the right hand side in the equation above and just postulate that $p(y\vert \beta,X)=\mathcal{N}(\mu,\sigma)$ which is a rather rough statement to begin with, but let's not dive into that right now. So when you maximize this expression, what are you actually doing? Tadam! You're doing data fitting. This might seem like a good thing but it's not. Basically you're generating every conceivable hypothesis known to the model at hand and picking the one that happens to coincide the best with your, in most cases, tiny dataset. That's not even the worst part; The worst part is that you won't even, once the fitting is done, be able to express yourself about the uncertainty of the parameters of your model!
+which states that the probability of observing a data set like ours given fixed $$\beta$$'s is the posterior probability of the $$\beta$$'s divided by our prior assumptions scaled by the total plausability of the data itself. Now this also sounds reasonable, and it is. The only problem is that the quantity on the left hand side is not sampled; it is maximized in Maximum Likelihood. Hence the name.. On top of that what you do in 99% of all cases is ignore the right hand side in the equation above and just postulate that $$p(y\vert \beta,X)=\mathcal{N}(\mu,\sigma)$$ which is a rather rough statement to begin with, but let's not dive into that right now. So when you maximize this expression, what are you actually doing? Tadam! You're doing data fitting. This might seem like a good thing but it's not. Basically you're generating every conceivable hypothesis known to the model at hand and picking the one that happens to coincide the best with your, in most cases, tiny dataset. That's not even the worst part; The worst part is that you won't even, once the fitting is done, be able to express yourself about the uncertainty of the parameters of your model!
  
 Now that we have skimmed through the surface of the math behind the two methodologies we're ready to look at some results and do the real analysis. 
  
@@ -125,9 +122,9 @@ Now to the dirty details of our calculations for the parameter estimates of the 
 |WDay6     |   -69723|    450270|    -3045|        117|
 |WDay7     |   -66678|    450270|       NA|         NA|
  
-If you're looking at the table above, you might think "What the damn hell!?", Bayesian statistics makes no sense at all! Why did we get these crazy estimates? Look at the nice narrow **confidence** intervals on the right hand side of the table generated by the maximum likelihood estimates and compare them to the wide **credibility** intervals to the left. You might be forgiven for dismissing the results from the Bayesian approach, since the difference is quite subtle from a mathematical point of view. After all we are computing the exact same mathematical model. The difference is our reasoning about the parameters. If you remember correctly maximum likelihood views the parameters as fixed constants without any variation. The variation you see in maximum likelihood comes from the uncertainty about the data and not the parameters! This is important to remember. The "Std. Error" from the maximum likelihood estimate has nothing to do with uncertainty about the parameter values for the observed data set. Instead it's uncertainty regarding what would happen to the estimates if we observed more data sets that looks like ours. Remember from the section above that, Statistically speaking, what ML does is maximize $p(y\vert \beta,X)$ which expresses likelihood over different $y$'s given an observed and fixed set of parameters $\beta$ along with covariates $X$.
+If you're looking at the table above, you might think "What the damn hell!?", Bayesian statistics makes no sense at all! Why did we get these crazy estimates? Look at the nice narrow **confidence** intervals on the right hand side of the table generated by the maximum likelihood estimates and compare them to the wide **credibility** intervals to the left. You might be forgiven for dismissing the results from the Bayesian approach, since the difference is quite subtle from a mathematical point of view. After all we are computing the exact same mathematical model. The difference is our reasoning about the parameters. If you remember correctly maximum likelihood views the parameters as fixed constants without any variation. The variation you see in maximum likelihood comes from the uncertainty about the data and not the parameters! This is important to remember. The "Std. Error" from the maximum likelihood estimate has nothing to do with uncertainty about the parameter values for the observed data set. Instead it's uncertainty regarding what would happen to the estimates if we observed more data sets that looks like ours. Remember from the section above that, Statistically speaking, what ML does is maximize $$p(y\vert \beta,X)$$ which expresses likelihood over different $$y$$'s given an observed and fixed set of parameters $$\beta$$ along with covariates $$X$$.
  
-But ok, maybe you think there's something very fishy with this model since the estimates are so different. How could we possible end up capturing the same time series? Well, rest assured that we can. Below you can see a scatter plot between the Observed response $y$ and the predicted $\hat{y}$ for the Bayesian and ML estimation. Pretty similar huh? We can also have a look at the average fitted values from the Bayesian estimation and the fitted values from the ML method. As you can see they agree to an rather high degree. 
+But ok, maybe you think there's something very fishy with this model since the estimates are so different. How could we possible end up capturing the same time series? Well, rest assured that we can. Below you can see a scatter plot between the Observed response $$y$$ and the predicted $$\hat{y}$$ for the Bayesian and ML estimation. Pretty similar huh? We can also have a look at the average fitted values from the Bayesian estimation and the fitted values from the ML method. As you can see they agree to an rather high degree. 
  
 ![Plot over the agreement between the fitting of the two approaches. The lefthand side shows the fitted vs observed for the Bayesian and the ML. The right hand side shows a scatterplot of the fitted from both approaches.](/images/figure/corrplots-1.png)
  
@@ -158,7 +155,7 @@ These are quantified in the table below and as you can see there's virtually no 
 |CVRMSE |    0.16|    0.16|
 |R2     |    0.45|    0.45|
  
-So again it seems like there's not much differentiating these models from one another. That is true while looking at the result of the average fitted values from the two estimates. However, there's a massive difference in the **interpretation** of the model. What do I mean by that you might ask yourself, and it's a good question because if the fit is apparently more or less the same we should be able to pick any of the methods right? Wrong! Remember what I said about sampling being important as it unveils structure in the parameter space that is otherwise hidden through the ML approach. In the illustration below you can see the posterior density of each $\beta$ for the weekday effects. Here it's clear that they can take many different values which ends up in equally good models. This is the reason why our uncertainty is huge in the Bayesian estimation. There is really a lot of probable parameter values that could be assumed by the model. Also present in the illustration is the ML estimate indicated by a dark vertical line.
+So again it seems like there's not much differentiating these models from one another. That is true while looking at the result of the average fitted values from the two estimates. However, there's a massive difference in the **interpretation** of the model. What do I mean by that you might ask yourself, and it's a good question because if the fit is apparently more or less the same we should be able to pick any of the methods right? Wrong! Remember what I said about sampling being important as it unveils structure in the parameter space that is otherwise hidden through the ML approach. In the illustration below you can see the posterior density of each $$\beta$$ for the weekday effects. Here it's clear that they can take many different values which ends up in equally good models. This is the reason why our uncertainty is huge in the Bayesian estimation. There is really a lot of probable parameter values that could be assumed by the model. Also present in the illustration is the ML estimate indicated by a dark vertical line.
  
 ![plot of chunk posteriorsbeta](/images/figure/posteriorsbeta-1.png)
  
@@ -170,7 +167,7 @@ There is one more important check that we need to do and that's a posterior pred
  
 ## Diving into the intercept
  
-As you saw previously there's way more support for different values of our parameters than the ML method shows us. To further visualize this we'll take a look at the samples for the intercept $\beta_0$ chain by chain using violin plots. They show the distribution on the y axis and the chain id on the x axis. As before the ML estimate is indicated by a black horizontal line. You can see that the ML approach only agrees with the expected value of chain number 2. The other support is completely ignored and not exposed to the user.
+As you saw previously there's way more support for different values of our parameters than the ML method shows us. To further visualize this we'll take a look at the samples for the intercept $$\beta_0$$ chain by chain using violin plots. They show the distribution on the y axis and the chain id on the x axis. As before the ML estimate is indicated by a black horizontal line. You can see that the ML approach only agrees with the expected value of chain number 2. The other support is completely ignored and not exposed to the user.
  
 ![plot of chunk interceptviolin](/images/figure/interceptviolin-1.png)
  
@@ -221,7 +218,7 @@ y_t &\sim N(\mu_t, \sigma)\\
 \sigma &\sim U(0.01, \infty) 
 \end{align}$$
  
-where $\mu_y^{emp}$ and $\sigma_y^{emp}$ are the empirical mean and standard deviation of the response variable respectively. This is a nice practical hack since it makes sure that your priors are in the vicinity of the response you're trying to model. The resulting code is given below. You can try it on your own daily time series. It's quite plug and play. 
+where $$\mu_y^{emp}$$ and $$\sigma_y^{emp}$$ are the empirical mean and standard deviation of the response variable respectively. This is a nice practical hack since it makes sure that your priors are in the vicinity of the response you're trying to model. The resulting code is given below. You can try it on your own daily time series. It's quite plug and play. 
  
 
     data {
@@ -279,7 +276,7 @@ Now let's have a look at this model instead. A quick look into these parameters 
 |WDay6     |  -69,723|   450,270|   -3,045|        117|   -1,788| 124|
 |WDay7     |  -66,678|   450,270|       NA|         NA|    1,249| 122|
  
-As you can see these estimates are quite different and to the naked eye makes more sense from what we know about the data set and what we can expect from intra-weekly effects. We can further check these estimates by inspecting the posteriors further. Note here the "bweekdayhat[1]" which is a delta distribution at 0. This serves as our baseline for the intra-week effect that we're capturing. The x-axis in the plot are the estimated $\beta_i$'s and the y-axis for each parameter is the posterior probability density.
+As you can see these estimates are quite different and to the naked eye makes more sense from what we know about the data set and what we can expect from intra-weekly effects. We can further check these estimates by inspecting the posteriors further. Note here the "bweekdayhat[1]" which is a delta distribution at 0. This serves as our baseline for the intra-week effect that we're capturing. The x-axis in the plot are the estimated $$\beta_i$$'s and the y-axis for each parameter is the posterior probability density.
  
 ![plot of chunk intervalplots](/images/figure/intervalplots-1.png)
  

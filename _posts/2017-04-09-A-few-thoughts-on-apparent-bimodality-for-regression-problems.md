@@ -2,10 +2,7 @@
 title: "A few thoughts on apparent bimodality for regression problems!"
 author: "Dr. Michael Green"
 date: "Apr 9, 2017"
-output: html_document
 layout: post
-published: true
-status: publish
 use_math: true
 ---
 
@@ -14,7 +11,7 @@ use_math: true
 
 # Motivation
 
-Did you ever run into a scenario when your data is showing two distinctive relationships but you're trying to solve for it with one regression line? This happens to me a lot. So I thought about having some fun with it intead of dreading it and the nasty consequences that may arise from this behaviour. Below you'll see a plot featuring two variables, $x$, and $y$ where we are tasked with figuring out how the value of $y$ depends on $x$.
+Did you ever run into a scenario when your data is showing two distinctive relationships but you're trying to solve for it with one regression line? This happens to me a lot. So I thought about having some fun with it intead of dreading it and the nasty consequences that may arise from this behaviour. Below you'll see a plot featuring two variables, $$x$$, and $$y$$ where we are tasked with figuring out how the value of $$y$$ depends on $$x$$.
 
 
 ```r
@@ -27,7 +24,7 @@ ggplot(mydf, aes(y=y, x=x)) + geom_point() + theme_minimal()
 
 ![plot of chunk problemplot](/images/figure/problemplot-1.png)
 
-Naturally, what comes to most peoples mind is that we need to model $y_t=\omega f(x_t)+\epsilon$ where $f$ and $\omega$ are currently unknown. The most straightforward solution to this is to assume that we are in a linear regime and consequently that $f(x)=I(x)=x$ where $I$ is the identity function. The equation then quickly becomes $y_t=\omega x_t+\epsilon$ at which time data scientists usually rejoice and apply linear regression. So let's do just that shall we.
+Naturally, what comes to most peoples mind is that we need to model $$y_t=\omega f(x_t)+\epsilon$$ where $$f$$ and $$\omega$$ are currently unknown. The most straightforward solution to this is to assume that we are in a linear regime and consequently that $$f(x)=I(x)=x$$ where $$I$$ is the identity function. The equation then quickly becomes $$y_t=\omega x_t+\epsilon$$ at which time data scientists usually rejoice and apply linear regression. So let's do just that shall we.
 
 ![plot of chunk unnamed-chunk-1](/images/figure/unnamed-chunk-1-1.png)
 
@@ -50,7 +47,7 @@ Below you can see the plotted simulated regression lines from the model. Not gre
 
 ![plot of chunk prediction plot](/images/figure/prediction plot-1.png)
 
-Ok, so if the previous model was badly specified then what should we do to fix it? In principle we want the following behavior $y_t=x_t(\beta+\omega z_t)+\alpha$ where $z_t$ is a binary state variable indicating whether the current $x_t$ has the first or the second response type. The full model we then might want to consider looks like this.
+Ok, so if the previous model was badly specified then what should we do to fix it? In principle we want the following behavior $$y_t=x_t(\beta+\omega z_t)+\alpha$$ where $$z_t$$ is a binary state variable indicating whether the current $$x_t$$ has the first or the second response type. The full model we then might want to consider looks like this.
 
 $$ \begin{align}
 y_t &\sim \mathcal N(\mu_t, \sigma)\\
@@ -62,7 +59,7 @@ z_t &\sim \mathcal{Bin}(1, 0.5)\\
 \sigma &\sim \mathcal U(0.01, \inf)
 \end{align} $$
 
-This would allow the state to be modeled as a latent variable in time. This is very useful for a variety of problems where we know something to be true but lack observed data to quantify it. However, modeling discrete latent variables can be computationally demanding if all you are really looking for is an extra dimension. We can of course design this. So instead of viewing $z_t$ as a latent state variable we can actually precode the state by unsupervised hierarchical clustering. The code in R would look like this.
+This would allow the state to be modeled as a latent variable in time. This is very useful for a variety of problems where we know something to be true but lack observed data to quantify it. However, modeling discrete latent variables can be computationally demanding if all you are really looking for is an extra dimension. We can of course design this. So instead of viewing $$z_t$$ as a latent state variable we can actually precode the state by unsupervised hierarchical clustering. The code in R would look like this.
 
 ```r
 d<-dist(mydf[, c("y", "x")])
@@ -70,11 +67,11 @@ hc<-hclust(d)
 mydf<-mutate(mydf, zz=cutree(hc, 2))
 ```
 
-which encodes the clustered state in a variable called $zz$. Consequently it would produce a hierarchical cluster like the one below.
+which encodes the clustered state in a variable called $$zz$$. Consequently it would produce a hierarchical cluster like the one below.
 
 ![plot of chunk clusterplot](/images/figure/clusterplot-1.png)
 
-This leaves us in a position where we can treat $z_t$ as observed data even though we sort of clustered it. The revised math is given below.
+This leaves us in a position where we can treat $$z_t$$ as observed data even though we sort of clustered it. The revised math is given below.
 
 $$ \begin{align}
 y_t &\sim \mathcal N(\mu_t, \sigma)\\
@@ -92,7 +89,7 @@ Comparing the results from our first model with the current one we can see that 
 
 ![plot of chunk 1vs2](/images/figure/1vs2-1.png)
 
-As is always instructional let's look at the posteriors of the parameters of our second model. They are depicted below. You can clearly see that the "increase in slope" parameter $\omega$ clearly captures the new behavior we wished to model.  
+As is always instructional let's look at the posteriors of the parameters of our second model. They are depicted below. You can clearly see that the "increase in slope" parameter $$\omega$$ clearly captures the new behavior we wished to model.  
 
 ![plot of chunk model results](/images/figure/model results-1.png)
 

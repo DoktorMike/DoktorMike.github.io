@@ -2,10 +2,7 @@
 title: "A first look at Edward!"
 author: "Dr. Michael Green"
 date: "Apr 1, 2017"
-output: html_document
 layout: post
-published: true
-status: publish
 use_math: true
 ---
 
@@ -236,7 +233,12 @@ Every data point in the graph above is marked with a red dot. The black lines ar
 
 ## Putting it in a regression formulation
 
-We can of course formulate this as a regression problem where the likelihood is set up on the error correction itself. This means that if we get noisy measurements it's the random variable that's regressed. The benefit is that we don't have to take the data at face value and neither does the model. Remember, uncertainty is not a bad thing as long as it can be quantified. Mathematically it looks like this
+We can of course formulate this as a regression problem where the likelihood is
+set up on the error correction itself. This means that if we get noisy
+measurements it's the random variable that's regressed. The benefit is that we
+don't have to take the data at face value and neither does the model. Remember,
+uncertainty is not a bad thing as long as it can be quantified. Mathematically
+it looks like this
 
 $$ \begin{align}
 X_t & \sim \mathcal N(\mu_{X,t}, \sigma_X)\\
@@ -246,15 +248,32 @@ X_t & \sim \mathcal N(\mu_{X,t}, \sigma_X)\\
 \sigma_X &= 0.1
 \end{align} $$
 
-where $X_t$ and $Z_t$ is the deviance in temperature and number of passengers transported by airplane at year $t$ respectively. The other variables quantify dynamics and uncertainty. The priors are specified quite widely to capture a broad spectrum of possibly consistent models. This model can also be sampled using Edward but I'll leave that as an exercise for you to solve.
+where $$X_t$$ and $$Z_t$$ is the deviance in temperature and number of
+passengers transported by airplane at year $$t$$ respectively. The other
+variables quantify dynamics and uncertainty. The priors are specified quite
+widely to capture a broad spectrum of possibly consistent models. This model can
+also be sampled using Edward but I'll leave that as an exercise for you to
+solve.
 
 # Conclusions from my simulations
 
-So I played around with Edward and it took a bit of time to get used to the Edward way of doing things. Mainly because it's so tightly connected to tensorflow. In general I like the idea of Edward and the flexibility in modeling that it allows for. That being said I think as of now the language is a bit young still. The Variational Inference approach (which is the only one I used in this post) works ok but when your priors are not in the vicinity of the final solution it rarely finds the correct posterior. There also seems to be quite heavy problems with varying scales of covariates. As such you should probably always work with normalized data when using Edward. To summarize the recommendations from this post
+So I played around with Edward and it took a bit of time to get used to the
+Edward way of doing things. Mainly because it's so tightly connected to
+tensorflow. In general I like the idea of Edward and the flexibility in modeling
+that it allows for. That being said I think as of now the language is a bit
+young still. The Variational Inference approach (which is the only one I used in
+this post) works ok but when your priors are not in the vicinity of the final
+solution it rarely finds the correct posterior. There also seems to be quite
+heavy problems with varying scales of covariates. As such you should probably
+always work with normalized data when using Edward. To summarize the
+recommendations from this post
 
 * Always normalize your data when working with Edward
-* Make sure your priors are in the vicinity of the final solution, i.e., for simple models you can use a maximum likelihood estimate as a starting point
-* Never base your final inference on a variational algorithm; Instead always run a full sampler to verify and obtain the true posterior
-* Edward is cool and I will keep following it but for now I will stay with Stan for my probabilistic programming needs
+* Make sure your priors are in the vicinity of the final solution, i.e., for
+  simple models you can use a maximum likelihood estimate as a starting point
+* Never base your final inference on a variational algorithm; Instead always run
+  a full sampler to verify and obtain the true posterior
+* Edward is cool and I will keep following it but for now I will stay with Stan
+  for my probabilistic programming needs
 
 Happy inferencing!

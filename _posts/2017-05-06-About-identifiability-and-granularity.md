@@ -2,10 +2,7 @@
 title: "About identifiability and granularity"
 author: "Dr. Michael Green"
 date: "May 6, 2017"
-output: html_document
 layout: post
-published: true
-status: publish
 use_math: true
 ---
  
@@ -43,9 +40,9 @@ where time is on the x axis and the response variable on the y axis. The first f
 |  4| -5.391217| 4.924959| -0.4488093|
 |  5| -1.360732| 3.237641| -0.1645335|
  
-So it's apparent that we have three variables in this data set; the response variable $y$, and the covariates $x$ and $z$ ($t$ is just an indicator of a fake time). So the real model is just a linear model of the two variables. Now say that instead we want to go about solving this problem and we have two individuals arguing about the best solution. Let's call them Mr. Granularity and Mr. Aggregation. Now Mr. Granularity is a fickle bastard as he always wants to split things into more fine grained buckets. Mr. Aggregation on the other hand is more kissable by nature. By that I'm refering to the Occam's razor version of kissable, meaning "Keep It Simple Sir" (KISS). 
+So it's apparent that we have three variables in this data set; the response variable $$y$$, and the covariates $$x$$ and $$z$$ ($$t$$ is just an indicator of a fake time). So the real model is just a linear model of the two variables. Now say that instead we want to go about solving this problem and we have two individuals arguing about the best solution. Let's call them Mr. Granularity and Mr. Aggregation. Now Mr. Granularity is a fickle bastard as he always wants to split things into more fine grained buckets. Mr. Aggregation on the other hand is more kissable by nature. By that I'm refering to the Occam's razor version of kissable, meaning "Keep It Simple Sir" (KISS). 
  
-This means that Mr. Granularity wants to estimate a parameter for each of the two variables while Mr. Aggregation wants to estimate one parameter for the sum of $x$ and $z$.
+This means that Mr. Granularity wants to estimate a parameter for each of the two variables while Mr. Aggregation wants to estimate one parameter for the sum of $$x$$ and $$z$$.
  
 # Mr. Granularity's solution
  
@@ -95,7 +92,7 @@ which is implemented in Stan code below. There's nothing funky or noteworthy goi
  
 # Mr. Aggregation's solution
  
-So remember that Mr. Aggregation was concerned about over-fitting and didn't want to split things up into the most granular pieces. As such, in his solution, we will add the two variables $x$ and $z$ together and quantify them as if they were one. The resulting model is given below followed by the implementation in Stan.
+So remember that Mr. Aggregation was concerned about over-fitting and didn't want to split things up into the most granular pieces. As such, in his solution, we will add the two variables $$x$$ and $$z$$ together and quantify them as if they were one. The resulting model is given below followed by the implementation in Stan.
  
 $$ \begin{align}
 y_t &\sim N(\mu_t, \sigma)\\
@@ -140,7 +137,7 @@ Now let's have a look at the different solutions and what we end up with. This p
  
 ![plot of chunk distributions](/images/figure/distributions-1.png)
  
-It is clear that the only direct comparison we can make is the intercept $b_0$ from both models. Now if you remember, the generating function doesn't contain an intercept. It's $0$. Visually inspecting the graphs above will show you that something bad is happening to both models. Let's put some numbers on this shall we. The Tables below will illuminate the situation. 
+It is clear that the only direct comparison we can make is the intercept $$b_0$$ from both models. Now if you remember, the generating function doesn't contain an intercept. It's $$0$$. Visually inspecting the graphs above will show you that something bad is happening to both models. Let's put some numbers on this shall we. The Tables below will illuminate the situation. 
  
 ### Parameter distributions - Granular model
  
@@ -151,7 +148,7 @@ It is clear that the only direct comparison we can make is the intercept $b_0$ f
 |bx |  0.88| -0.41|  0.44|  0.87| 1.32|  2.15|
 |bz |  7.21|  5.89|  6.77|  7.23| 7.66|  8.49|
  
-Mr. Granularity have indeed identified a *possible* intercept with the current model. The mean value of the posterior is -0.88 and as you can see there is 33% probability mass larger than $0$ indicating the models confidence that there is an intercept. The model expresses the same certainty about the fact that $\beta_x$ and $\beta_z$ are real given that 91% and 100% of their masses respectively are above $0$. The absolute errors for the models estimate are -0.12 and 0.21 for $\beta_x$ and $\beta_z$ respectively.
+Mr. Granularity have indeed identified a *possible* intercept with the current model. The mean value of the posterior is -0.88 and as you can see there is 33% probability mass larger than $$0$$ indicating the models confidence that there is an intercept. The model expresses the same certainty about the fact that $$\beta_x$$ and $$\beta_z$$ are real given that 91% and 100% of their masses respectively are above $$0$$. The absolute errors for the models estimate are -0.12 and 0.21 for $$\beta_x$$ and $$\beta_z$$ respectively.
  
 ### Parameter distributions - Aggregated model
  
@@ -161,7 +158,7 @@ Mr. Granularity have indeed identified a *possible* intercept with the current m
 |b0 | -6.11| -10.19| -7.47| -6.14| -4.77| -1.99|
 |br |  3.89|   2.90|  3.56|  3.89|  4.22|  4.89|
  
-Mr. Aggregation have also identified a *possible* intercept with the current model. The mean value of the posterior is -6.11 and as you can see there is 0% probability mass larger than $0$ indicating the models confidence that there is an intercept. The model expresses the same certainty about the fact that $\beta_r$ is real given that 100% of it's mass is above $0$. The absolute errors for the models estimate are 2.89 and -3.11 if you consider the distance from the true $\beta_x$ and $\beta_z$ respectively.
+Mr. Aggregation have also identified a *possible* intercept with the current model. The mean value of the posterior is -6.11 and as you can see there is 0% probability mass larger than $$0$$ indicating the models confidence that there is an intercept. The model expresses the same certainty about the fact that $$\beta_r$$ is real given that 100% of it's mass is above $$0$$. The absolute errors for the models estimate are 2.89 and -3.11 if you consider the distance from the true $$\beta_x$$ and $$\beta_z$$ respectively.
  
 ## Comparing the solutions
  
@@ -177,9 +174,9 @@ The table below quantifies the differences between the estimated parameters and 
 | Mr. G bx |  | 0.12 |  |
 | Mr. G bz |  |  |  0.21  |
  
-As is apparent from the table you can see that Mr. Aggregation's model is 289% off with respect to the true $\beta_x$ coefficient, and 44% off with respect to the true $\beta_z$ coefficient. That's not very impressive and actually leads to the wrong conclusions when trying to discern the dynamics of $x$ and $z$ on $y$.
+As is apparent from the table you can see that Mr. Aggregation's model is 289% off with respect to the true $$\beta_x$$ coefficient, and 44% off with respect to the true $$\beta_z$$ coefficient. That's not very impressive and actually leads to the wrong conclusions when trying to discern the dynamics of $$x$$ and $$z$$ on $$y$$.
  
-The corresponding analysis for the granular model gives us better results. Mr. Granularity's model is 12% off with respect to the true $\beta_x$ coefficient, and 3% off with respect to the true $\beta_z$ coefficient. This seems a lot better. But still, if we have a granular model, why are we so off on the intercept? Well if you remember the generating function from before it looked like this
+The corresponding analysis for the granular model gives us better results. Mr. Granularity's model is 12% off with respect to the true $$\beta_x$$ coefficient, and 3% off with respect to the true $$\beta_z$$ coefficient. This seems a lot better. But still, if we have a granular model, why are we so off on the intercept? Well if you remember the generating function from before it looked like this
  
 $$ \begin{align}
 y_t &\sim N(\mu_t, 7)\\
@@ -197,7 +194,7 @@ x_t &\sim N(0, 1)\\
 z_t &\sim N(1, 1)\\
 \end{align} $$
  
-which in turn would make the $x_t$ variable nothing but noise. This can indeed be confirmed if you simulate many times. This is one of the core problems behind some models; identifiability. It's a tough thing and the very reason why maximum likelihood can not be used in general. You need to sample!
+which in turn would make the $$x_t$$ variable nothing but noise. This can indeed be confirmed if you simulate many times. This is one of the core problems behind some models; identifiability. It's a tough thing and the very reason why maximum likelihood can not be used in general. You need to sample!
  
  
 # Conclusion

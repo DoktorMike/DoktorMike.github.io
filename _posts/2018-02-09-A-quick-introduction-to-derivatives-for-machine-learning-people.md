@@ -23,7 +23,8 @@ into that I'll show you what it's all based on. To do that we have to define
 what a derivative is supposed to do for you. Do you know? I'm sure you do, but
 just in case you don't;
 
-> A derivative is a continuous description of how a function changes with small changes in one or multiple variables.
+> A derivative is a continuous description of how a function changes with small
+> changes in one or multiple variables.
 
 We're going to look into many aspects of that statement. For example 
 
