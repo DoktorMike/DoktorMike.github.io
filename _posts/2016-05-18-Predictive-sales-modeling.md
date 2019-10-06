@@ -80,21 +80,21 @@ The hypotheses related to these challenges in media are typically
 expressed through probability distributions for observable domain
 specific data. These probability distributions depend on a set of
 unknown quantities called parameters. Let’s call all of these parameters
-$\theta$. In the Bayesian paradigm, current knowledge about the model
+$$\theta$$. In the Bayesian paradigm, current knowledge about the model
 parameters is expressed by placing a probability distribution on the
 parameters. This distribution is known as the “prior distribution”,
-which is mathematically denoted by $p(\theta)$. The word stems from the
+which is mathematically denoted by $$p(\theta)$$. The word stems from the
 fact that it expresses our beliefs about the parameters prior to
 observing any evidence(data) that supports it.
 
-As data $y$ become available, the information they bring to the table
+As data $$y$$ become available, the information they bring to the table
 about the nature of the model parameters is expressed in something
 called the “likelihood,” which is proportional to the distribution of
 the observed data given the model parameters, written as
-$p(y\vert\theta)$. In more plain English the likelihood tells us
+$$p(y\vert\theta)$$. In more plain English the likelihood tells us
 something about how likely we are to observe that specific data given
 the set of parameter values. As the data is fixed the only thing we can
-vary are the parameters $\theta$, which means that the larger the
+vary are the parameters $$\theta$$, which means that the larger the
 likelihood the more consistent our parameter choice is with the observed
 data.
 
@@ -183,11 +183,11 @@ more to it and of why they are massively difficult to tune.
     problem and all we have to do is to evaluate each of the 10 values
     and select the best one. Easy enough. Now suppose we have another
     variable which can also assume 10 possible values. Now we have
-    $10\times10=100$ possible configurations to search through.
-    Following the same logic, imagine that we have $M$ variables each
-    featuring D possible values. This would result in $D^M$
+    $$10\times10=100$$ possible configurations to search through.
+    Following the same logic, imagine that we have $$M$$ variables each
+    featuring D possible values. This would result in $$D^M$$
     possible configurations. Plugging our situation into this equation
-    would yield $10^{30}$ possibilities. That’s 100 billion times as
+    would yield $$10^{30}$$ possibilities. That’s 100 billion times as
     many configurations as there are grains of sand on earth.
 
 Due to these challenges and the vast experience required to tune

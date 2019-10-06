@@ -37,7 +37,7 @@ where $x_1$ and $x_2$ are realized samples from the two dimensional multivariate
  
 where the correlation between our variables are obvious. So let's plot each variable against it's response and have a look. As you can see it's quite apparent that the variables are rather similar.
  
-``` r
+```r
 Sigma <- matrix(c(3, 2.5, 2.5, 3), 2, 2)
 mydf <- as_tibble(data.frame(mvrnorm(500, c(10, 10), Sigma))) %>% 
     mutate(y = 1 * X1 + 1 * X2 + 1 * X1 * X2 + 5 + rnorm(length(X1), 0, 20))
@@ -58,6 +58,7 @@ In R you specify interaction effects like this ":" which might look a bit weird 
  
  
 <table style="border-collapse:collapse; border:none;border-bottom:double;">
+<tr>
 <td style="padding:0.2cm; border-top:double;">&nbsp;</td>
 <td style="border-bottom:1px solid; padding-left:0.5em; padding-right:0.5em; border-top:double;">&nbsp;</td>
 <td style="padding:0.2cm; text-align:center; border-bottom:1px solid; border-top:double;" colspan="4">y</td>

@@ -45,7 +45,7 @@ Then let's get to the results. Below you'll see a box and whiskers plots of the 
  
 ![plot of chunk the performance](/images/figure/the performance-1.png)
  
-Where did all the optimizations for the different algorithms go? Let's make a scatterplot and find out! The continuous line is our original Bolognese function that we want to optimize with respect to the parameter timing $t$.
+Where did all the optimizations for the different algorithms go? Let's make a scatterplot and find out! The continuous line is our original Bolognese function that we want to optimize with respect to the parameter timing $$t$$.
  
 ![plot of chunk plotwithlocalfit](/images/figure/plotwithlocalfit-1.png)
  
